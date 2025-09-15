@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recettes</title>
+  <link rel="stylesheet" href="Styles/Style_recette.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Ingrédients</a>
+    <a href="recette.html">Recettes</a>
+    <a href="planning.html">Planning Semaine</a>
+    <a href="courses.html">Liste de Courses</a>
+    <a href="setup.html">Paramètres</a>
+  </nav>
+
+  <div class="main-container">
+    <aside class="side-menu">
+      <h3>Recettes</h3>
+      <ul id="recipeList"></ul>
+      <button id="newRecipeBtn">➕ Nouvelle Recette</button>
+    </aside>
+
+    <section class="recipes" id="recipesContainer"></section>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
+      authDomain: "liste-de-courses-8a78d.firebaseapp.com",
+      projectId: "liste-de-courses-8a78d",
+      storageBucket: "liste-de-courses-8a78d.appspot.com",
+      messagingSenderId: "90294670968",
+      appId: "1:90294670968:web:901f321930a3a6342dbf8d"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    let allIngredients = [];
+    let allUnites = [];
+
+    // Récupération des ingrédients
+    async function getIngredients() {
+      const snapshot = await db.collection("ingredients").get();
+      allIngredients = snapshot.docs.map(doc => doc.data().nom);
+    }
+
+    // Récupération des unités
+    async function getUnites() {
+      const snapshot = await db.collection("Unites").get();
+      allUnites = snapshot.docs.map(doc => doc.data().nom);
+    }
+
+    // Génération des lignes pour une recette
+    function generateRecipeRows(tbody, lignes = []) {
+      for (let i = 0; i < 20; i++) {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>
+            <select class="ingredient-select">
+              <option value="">-- Choisir --</option>
+            </select>
+          </td>
+          <td contenteditable="true"></td>
+          <td>
+            <select class="unite-select">
+              <option value="">-- Choisir --</option>
+            </select>
+          </td>
+        `;
+        tbody.appendChild(row);
+      }
+
+      tbody.querySelectorAll("tr").forEach((row, i) => {
+        const ingredientSelect = row.querySelector(".ingredient-select");
+        const uniteSelect = row.querySelector(".unite-select");
+
+        allIngredients.forEach(ing => {
+          const option = document.createElement("option");
+          option.value = ing;
+          option.textContent = ing;
+          ingredientSelect.appendChild(option);
+        });
+
+        allUnites.forEach(unite => {
+          const option = document.createElement("option");
+          option.value = unite;
+          option.textContent = unite;
+          uniteSelect.appendChild(option);
+        });
+
+        if (lignes[i]) {
+          ingredientSelect.value = lignes[i].ingredient || "";
+          row.cells[1].textContent = lignes[i].quantite || "";
+          uniteSelect.value = lignes[i].unite || "";
+        }
+
+        // Sauvegarde automatique dès qu'il y a un changement
+        ingredientSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
+        row.cells[1].addEventListener("input", () => saveRecipeAuto(row.closest("article")));
+        uniteSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
+      });
+    }
+
+    // Ajout d'une recette dans le DOM
+    function addRecipeToDOM(recetteData) {
+      const container = document.getElementById("recipesContainer");
+      const article = document.createElement("article");
+      const recetteId = recetteData.nom.toLowerCase().replace(/\s+/g, "_");
+      article.id = recetteId;
+      article.className = "recipe-card";
+
+      article.innerHTML = `
+        <h2 contenteditable="true">${recetteData.nom}</h2>
+        <button class="delete-recipe-btn">🗑 Supprimer</button>
+        <table>
+          <thead>
+            <tr>
+              <th>Ingrédient</th>
+              <th>Quantité</th>
+              <th>Unité</th>
+            </tr>
+          </thead>
+          <tbody class="recipe-body"></tbody>
+        </table>
+      `;
+
+      container.appendChild(article);
+      const tbody = article.querySelector(".recipe-body");
+      generateRecipeRows(tbody, recetteData.lignes || []);
+
+      // Sauvegarde automatique du nom de la recette
+      const titre = article.querySelector("h2");
+      titre.addEventListener("input", () => saveRecipeAuto(article));
+
+      // Bouton de suppression
+      const deleteBtn = article.querySelector(".delete-recipe-btn");
+      deleteBtn.onclick = async () => {
+        if (!confirm(`🗑 Supprimer la recette "${titre.textContent}" ?`)) return;
+        try {
+          await db.collection("recettes").doc(article.id).delete();
+          article.remove();
+          updateRecipeList();
+          alert("Recette supprimée avec succès.");
+        } catch (err) {
+          console.error(err);
+          alert("❌ Erreur lors de la suppression.");
+        }
+      };
+    }
+
+    // Mise à jour de la liste de navigation
+    function updateRecipeList() {
+      const list = document.getElementById("recipeList");
+      list.innerHTML = "";
+      document.querySelectorAll(".recipe-card").forEach(article => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = `#${article.id}`;
+        a.textContent = article.querySelector("h2").textContent;
+        li.appendChild(a);
+        list.appendChild(li);
+      });
+    }
+
+    // Fonction de sauvegarde automatique
+    async function saveRecipeAuto(article) {
+      const titre = article.querySelector("h2");
+      const nouvelleNom = titre.textContent.trim();
+      if (!nouvelleNom) return;
+
+      const ancienId = article.id;
+      const nouveauId = nouvelleNom.toLowerCase().replace(/\s+/g, "_");
+
+      const rows = article.querySelectorAll("tbody tr");
+      const recetteData = [];
+      rows.forEach(row => {
+        const ingredient = row.querySelector("select.ingredient-select").value.trim();
+        const quantite = row.cells[1].textContent.trim();
+        const unite = row.querySelector("select.unite-select").value.trim();
+        if (ingredient) recetteData.push({ ingredient, quantite, unite });
+      });
+
+      if (recetteData.length === 0) return;
+
+      try {
+        if (ancienId !== nouveauId) {
+          await db.collection("recettes").doc(ancienId).delete();
+          article.id = nouveauId;
+        }
+        await db.collection("recettes").doc(nouveauId).set({
+          nom: nouvelleNom,
+          lignes: recetteData,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        updateRecipeList();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // Création d'une nouvelle recette
+    document.getElementById("newRecipeBtn").onclick = async () => {
+      const nomRecette = prompt("Nom de la nouvelle recette :");
+      if (!nomRecette) return;
+      const recetteId = nomRecette.toLowerCase().replace(/\s+/g, "_");
+      const docRef = db.collection("recettes").doc(recetteId);
+      const docSnap = await docRef.get();
+      if (docSnap.exists) return alert("Cette recette existe déjà !");
+
+      const nouvelleRecette = { nom: nomRecette, lignes: [], timestamp: firebase.firestore.FieldValue.serverTimestamp() };
+      await docRef.set(nouvelleRecette);
+      addRecipeToDOM(nouvelleRecette);
+      updateRecipeList();
+    };
+
+    // Chargement de toutes les recettes
+    async function loadAllRecipes() {
+      await getIngredients();
+      await getUnites();
+
+      const snapshot = await db.collection("recettes").orderBy("nom").get();
+      const container = document.getElementById("recipesContainer");
+      container.innerHTML = "";
+
+      snapshot.docs.forEach(doc => {
+        addRecipeToDOM(doc.data());
+      });
+      updateRecipeList();
+    }
+
+    document.addEventListener("DOMContentLoaded", loadAllRecipes);
+  </script>
+
+</body>
+</html>
