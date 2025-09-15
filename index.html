@@ -1,54 +1,52 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- ===== MÉTADONNÉES & STYLE ===== -->
-  <meta charset="utf_8" />
+  <!-- ===== MÃ‰TADONNÃ‰ES & STYLE ===== -->
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Menu et Liste de Courses</title>
-  <link rel="stylesheet" href="Styles/Style_index.css" />
+  <link rel="stylesheet" href="styles/style_index.css" />
 </head>
 <body>
 
   <!-- ===== BARRE DE NAVIGATION ===== -->
-  <!-- Permet de passer d'une section à une autre -->
   <nav>
-	  <a href="index.html">Ingrédients</a>
-	  <a href="recette.html">Recettes</a>
-	  <a href="planning.html">Planning Semaine</a>
-	  <a href="courses.html">Liste de Courses</a>
-	  <a href="setup.html">Paramètres</a>
-	</nav>
+    <a href="index.html">IngrÃ©dients</a>
+    <a href="recette.html">Recettes</a>
+    <a href="planning.html">Planning Semaine</a>
+    <a href="courses.html">Liste de Courses</a>
+    <a href="setup.html">ParamÃ¨tres</a>
+  </nav>
 
   <!-- ===== CONTENEUR PRINCIPAL ===== -->
   <div class="container">
 
-    <!-- ===== SECTION : Ingrédients ===== -->
+    <!-- ===== SECTION : IngrÃ©dients ===== -->
     <section id="ingredients">
-      <h2>Ingrédients</h2>
+      <h2>IngrÃ©dients</h2>
       <p class="centered-warning">
-        &#9888;&#65039; Connexion Internet requise pour sauvegarder toutes modifications ! &#9888;&#65039;
+        âš ï¸ Connexion Internet requise pour sauvegarder toutes modifications ! âš ï¸
       </p>
       <div style="text-align: center; margin-bottom: 1em;">
-        <button id="clearAllBtn">Effacer tous les ingrédients</button>
+        <button id="clearAllBtn">Effacer tous les ingrÃ©dients</button>
       </div>
 
-      <!-- ===== TABLEAU DES INGRÉDIENTS ===== -->
-      <!-- Chaque colonne correspond à une catégorie (10 au total) -->
+      <!-- ===== TABLEAU DES INGRÃ‰DIENTS ===== -->
       <table class="excel-table dotted-borders" id="ingredientsTable">
         <thead>
           <tr>
-            <th>&#127826; Fruits &amp; Légumes</th>
-            <th>&#127831; Viandes &amp; Poissons</th>
-            <th>&#129472; Produits Laitiers</th>
-            <th>&#129366; Boulangerie &amp; Céréales</th>
-            <th>&#129474; Épicerie salée</th>
-            <th>&#127851; Épicerie sucrée</th>
-            <th>&#10052; Surgelé</th>
-            <th>&#127865; Boissons</th>
-            <th>&#129533; Produits ménagers</th>
-            <th>&#129524; Hygiène &amp; Beauté</th>
+            <th>ğŸ Fruits &amp; LÃ©gumes</th>
+            <th>ğŸ— Viandes &amp; Poissons</th>
+            <th>ğŸ§€ Produits Laitiers</th>
+            <th>ğŸ¥ Boulangerie &amp; CÃ©rÃ©ales</th>
+            <th>ğŸ¥« Ã‰picerie salÃ©e</th>
+            <th>ğŸ« Ã‰picerie sucrÃ©e</th>
+            <th>â„ï¸ SurgelÃ©</th>
+            <th>ğŸ¹ Boissons</th>
+            <th>ğŸ§´ Produits mÃ©nagers</th>
+            <th>ğŸ§¼ HygiÃ¨ne &amp; BeautÃ©</th>
           </tr>
-          <!-- Ligne d'entrée pour ajouter de nouveaux ingrédients -->
           <tr id="inputRow">
             <th><input type="text" placeholder="Ajouter..." /></th>
             <th><input type="text" placeholder="Ajouter..." /></th>
@@ -65,16 +63,13 @@
         <tbody id="ingredientsBody"></tbody>
       </table>
     </section>
-
   </div>
 
-  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des ingrédients) ===== -->
+  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des ingrÃ©dients) ===== -->
   <script type="module">
-    // === Import des modules Firebase (CDN) ===
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    // === Configuration Firebase (?? à garder privé si projet sensible) ===
     const firebaseConfig = {
       apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
       authDomain: "liste-de-courses-8a78d.firebaseapp.com",
@@ -84,21 +79,15 @@
       appId: "1:90294670968:web:901f321930a3a6342dbf8d"
     };
 
-    // === Initialisation Firebase ===
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // === Fonction de normalisation pour tri sans accents ===
     const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-
-    // === Données locales (10 colonnes) ===
     const ingredientsData = Array.from({ length: 10 }, () => []);
     const ingredientsIds = Array.from({ length: 10 }, () => []);
-
     const inputCells = document.querySelectorAll('#inputRow input');
     const tbody = document.getElementById('ingredientsBody');
 
-    // === Rafraîchit le tableau HTML des ingrédients ===
     function updateIngredientTable() {
       tbody.innerHTML = '';
       const max = Math.max(...ingredientsData.map(col => col.length));
@@ -110,9 +99,9 @@
           if (item) {
             td.textContent = item;
             const btn = document.createElement('button');
-            btn.textContent = '×';
+            btn.textContent = 'Ã—';
             btn.className = 'delete-btn';
-            btn.title = 'Supprimer cet ingrédient';
+            btn.title = 'Supprimer cet ingrÃ©dient';
             btn.addEventListener('click', () => deleteIngredient(j, i));
             td.appendChild(btn);
           }
@@ -122,16 +111,11 @@
       }
     }
 
-    // === Ajoute un ingrédient dans Firestore et en local ===
     async function addToFirestore(colIndex, value) {
-      const docRef = await addDoc(collection(db, "ingredients"), {
-        col: colIndex,
-        nom: value
-      });
+      const docRef = await addDoc(collection(db, "ingredients"), { col: colIndex, nom: value });
       ingredientsIds[colIndex].push(docRef.id);
     }
 
-    // === Charge tous les ingrédients depuis Firestore ===
     async function loadFromFirestore() {
       const snapshot = await getDocs(collection(db, "ingredients"));
       const cols = Array.from({ length: 10 }, () => []);
@@ -152,7 +136,6 @@
       updateIngredientTable();
     }
 
-    // === Supprime un ingrédient ===
     async function deleteIngredient(colIndex, itemIndex) {
       const docId = ingredientsIds[colIndex][itemIndex];
       if (!docId) return;
@@ -166,7 +149,6 @@
       }
     }
 
-    // === Ajout via les champs d'entrée ===
     inputCells.forEach((input, colIndex) => {
       input.addEventListener('change', async () => {
         const value = input.value.trim();
@@ -181,7 +163,6 @@
       });
     });
 
-    // === Supprime tous les ingrédients ===
     async function clearAllIngredients() {
       const snapshot = await getDocs(collection(db, "ingredients"));
       const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "ingredients", docSnap.id)));
@@ -193,28 +174,28 @@
       updateIngredientTable();
     }
 
-    // === Bouton "Effacer tous les ingrédients" ===
     document.getElementById('clearAllBtn').addEventListener('click', async () => {
-      if (confirm("Êtes-vous sûr de vouloir effacer tous les ingrédients ? Cette action est irréversible.")) {
+      if (confirm("ÃŠtes-vous sÃ»r de vouloir effacer tous les ingrÃ©dients ?")) {
         await clearAllIngredients();
-        alert("Tous les ingrédients ont été effacés.");
+        alert("Tous les ingrÃ©dients ont Ã©tÃ© effacÃ©s.");
       }
     });
 
-    // === Démarrage : chargement des données ===
     await loadFromFirestore();
   </script>
 
   <!-- ===== SCRIPT POUR NAVIGATION ENTRE SECTIONS ===== -->
   <script>
-    // Affiche uniquement la section demandée
     function showSection(id) {
       ['ingredients', 'recettes', 'planning', 'courses', 'setup'].forEach(sec => {
-        document.getElementById(sec).classList.toggle('hidden', sec !== id);
+        const el = document.getElementById(sec);
+        if (el) {
+          el.classList.toggle('hidden', sec !== id);
+        }
       });
     }
-    showSection('ingredients'); // Section affichée par défaut
+    showSection('ingredients');
   </script>
-
 </body>
 </html>
+
