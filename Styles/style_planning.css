@@ -31,7 +31,7 @@ nav a {
 
 .container {
     padding: 2rem 3rem;
-    max-width: 100%; /* plus limité à 1200px pour laisser défiler */
+    max-width: 100%; /* plus limitÃ© Ã  1200px pour laisser dÃ©filer */
     margin: auto;
 }
 
@@ -90,7 +90,7 @@ tbody td {
 }
 
 tbody tr:hover {
-    background-color: #f0f8ff; /* survol léger pour chaque ligne */
+    background-color: #f0f8ff; /* survol lÃ©ger pour chaque ligne */
 }
 
 tbody select {
@@ -109,15 +109,15 @@ b {
 #jours-container {
     display: flex;
     gap: 20px;
-    overflow-x: auto; /* défilement horizontal */
+    overflow-x: auto; /* dÃ©filement horizontal */
     padding-bottom: 1rem;
-	overflow-x: hidden; /* <-- empêche la barre native */
+	overflow-x: hidden; /* <-- empÃªche la barre native */
     scroll-behavior: smooth;
 }
 
 .jour-card {
     min-width: 380px; /* largeur fixe pour chaque jour */
-    flex: 0 0 auto;   /* empêche la compression */
+    flex: 0 0 auto;   /* empÃªche la compression */
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 12px;
@@ -135,7 +135,7 @@ b {
     position: fixed;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: 80%;
     background: #f1f1f1;
     padding: 5px 10px;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
@@ -144,5 +144,7 @@ b {
 
 #scrollbar-range {
     width: 100%;
+	cursor: pointer;
 }
+
 
