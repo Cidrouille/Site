@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- ===== MÉTADONNÉES & STYLE ===== -->
-  <meta charset="utf_8" />
+  <!-- ===== MÃ‰TADONNÃ‰ES & STYLE ===== -->
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Menu et Liste de Courses</title>
   <link rel="stylesheet" href="Styles/Style_index.css" />
@@ -10,45 +10,45 @@
 <body>
 
   <!-- ===== BARRE DE NAVIGATION ===== -->
-  <!-- Permet de passer d'une section à une autre -->
+  <!-- Permet de passer d'une section Ã  une autre -->
   <nav>
-	  <a href="index.html">Ingrédients</a>
+	  <a href="index.html">IngrÃ©dients</a>
 	  <a href="recette.html">Recettes</a>
 	  <a href="planning.html">Planning Semaine</a>
 	  <a href="courses.html">Liste de Courses</a>
-	  <a href="setup.html">Paramètres</a>
+	  <a href="setup.html">ParamÃ¨tres</a>
 	</nav>
 
   <!-- ===== CONTENEUR PRINCIPAL ===== -->
   <div class="container">
 
-    <!-- ===== SECTION : Ingrédients ===== -->
+    <!-- ===== SECTION : IngrÃ©dients ===== -->
     <section id="ingredients">
-      <h2>Ingrédients</h2>
+      <h2>IngrÃ©dients</h2>
       <p class="centered-warning">
         &#9888;&#65039; Connexion Internet requise pour sauvegarder toutes modifications ! &#9888;&#65039;
       </p>
       <div style="text-align: center; margin-bottom: 1em;">
-        <button id="clearAllBtn">Effacer tous les ingrédients</button>
+        <button id="clearAllBtn">Effacer tous les ingrÃ©dients</button>
       </div>
 
-      <!-- ===== TABLEAU DES INGRÉDIENTS ===== -->
-      <!-- Chaque colonne correspond à une catégorie (10 au total) -->
+      <!-- ===== TABLEAU DES INGRÃ‰DIENTS ===== -->
+      <!-- Chaque colonne correspond Ã  une catÃ©gorie (10 au total) -->
       <table class="excel-table dotted-borders" id="ingredientsTable">
         <thead>
           <tr>
-            <th>&#127826; Fruits &amp; Légumes</th>
+            <th>&#127826; Fruits &amp; LÃ©gumes</th>
             <th>&#127831; Viandes &amp; Poissons</th>
             <th>&#129472; Produits Laitiers</th>
-            <th>&#129366; Boulangerie &amp; Céréales</th>
-            <th>&#129474; Épicerie salée</th>
-            <th>&#127851; Épicerie sucrée</th>
-            <th>&#10052; Surgelé</th>
+            <th>&#129366; Boulangerie &amp; CÃ©rÃ©ales</th>
+            <th>&#129474; Ã‰picerie salÃ©e</th>
+            <th>&#127851; Ã‰picerie sucrÃ©e</th>
+            <th>&#10052; SurgelÃ©</th>
             <th>&#127865; Boissons</th>
-            <th>&#129533; Produits ménagers</th>
-            <th>&#129524; Hygiène &amp; Beauté</th>
+            <th>&#129533; Produits mÃ©nagers</th>
+            <th>&#129524; HygiÃ¨ne &amp; BeautÃ©</th>
           </tr>
-          <!-- Ligne d'entrée pour ajouter de nouveaux ingrédients -->
+          <!-- Ligne d'entrÃ©e pour ajouter de nouveaux ingrÃ©dients -->
           <tr id="inputRow">
             <th><input type="text" placeholder="Ajouter..." /></th>
             <th><input type="text" placeholder="Ajouter..." /></th>
@@ -68,13 +68,13 @@
 
   </div>
 
-  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des ingrédients) ===== -->
+  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des ingrÃ©dients) ===== -->
   <script type="module">
     // === Import des modules Firebase (CDN) ===
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    // === Configuration Firebase (?? à garder privé si projet sensible) ===
+    // === Configuration Firebase (?? Ã  garder privÃ© si projet sensible) ===
     const firebaseConfig = {
       apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
       authDomain: "liste-de-courses-8a78d.firebaseapp.com",
@@ -91,14 +91,14 @@
     // === Fonction de normalisation pour tri sans accents ===
     const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
-    // === Données locales (10 colonnes) ===
+    // === DonnÃ©es locales (10 colonnes) ===
     const ingredientsData = Array.from({ length: 10 }, () => []);
     const ingredientsIds = Array.from({ length: 10 }, () => []);
 
     const inputCells = document.querySelectorAll('#inputRow input');
     const tbody = document.getElementById('ingredientsBody');
 
-    // === Rafraîchit le tableau HTML des ingrédients ===
+    // === RafraÃ®chit le tableau HTML des ingrÃ©dients ===
     function updateIngredientTable() {
       tbody.innerHTML = '';
       const max = Math.max(...ingredientsData.map(col => col.length));
@@ -110,9 +110,9 @@
           if (item) {
             td.textContent = item;
             const btn = document.createElement('button');
-            btn.textContent = '×';
+            btn.textContent = 'Ã—';
             btn.className = 'delete-btn';
-            btn.title = 'Supprimer cet ingrédient';
+            btn.title = 'Supprimer cet ingrÃ©dient';
             btn.addEventListener('click', () => deleteIngredient(j, i));
             td.appendChild(btn);
           }
@@ -122,7 +122,7 @@
       }
     }
 
-    // === Ajoute un ingrédient dans Firestore et en local ===
+    // === Ajoute un ingrÃ©dient dans Firestore et en local ===
     async function addToFirestore(colIndex, value) {
       const docRef = await addDoc(collection(db, "ingredients"), {
         col: colIndex,
@@ -131,7 +131,7 @@
       ingredientsIds[colIndex].push(docRef.id);
     }
 
-    // === Charge tous les ingrédients depuis Firestore ===
+    // === Charge tous les ingrÃ©dients depuis Firestore ===
     async function loadFromFirestore() {
       const snapshot = await getDocs(collection(db, "ingredients"));
       const cols = Array.from({ length: 10 }, () => []);
@@ -152,7 +152,7 @@
       updateIngredientTable();
     }
 
-    // === Supprime un ingrédient ===
+    // === Supprime un ingrÃ©dient ===
     async function deleteIngredient(colIndex, itemIndex) {
       const docId = ingredientsIds[colIndex][itemIndex];
       if (!docId) return;
@@ -166,7 +166,7 @@
       }
     }
 
-    // === Ajout via les champs d'entrée ===
+    // === Ajout via les champs d'entrÃ©e ===
     inputCells.forEach((input, colIndex) => {
       input.addEventListener('change', async () => {
         const value = input.value.trim();
@@ -181,7 +181,7 @@
       });
     });
 
-    // === Supprime tous les ingrédients ===
+    // === Supprime tous les ingrÃ©dients ===
     async function clearAllIngredients() {
       const snapshot = await getDocs(collection(db, "ingredients"));
       const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "ingredients", docSnap.id)));
@@ -193,28 +193,29 @@
       updateIngredientTable();
     }
 
-    // === Bouton "Effacer tous les ingrédients" ===
+    // === Bouton "Effacer tous les ingrÃ©dients" ===
     document.getElementById('clearAllBtn').addEventListener('click', async () => {
-      if (confirm("Êtes-vous sûr de vouloir effacer tous les ingrédients ? Cette action est irréversible.")) {
+      if (confirm("ÃŠtes-vous sÃ»r de vouloir effacer tous les ingrÃ©dients ? Cette action est irrÃ©versible.")) {
         await clearAllIngredients();
-        alert("Tous les ingrédients ont été effacés.");
+        alert("Tous les ingrÃ©dients ont Ã©tÃ© effacÃ©s.");
       }
     });
 
-    // === Démarrage : chargement des données ===
+    // === DÃ©marrage : chargement des donnÃ©es ===
     await loadFromFirestore();
   </script>
 
   <!-- ===== SCRIPT POUR NAVIGATION ENTRE SECTIONS ===== -->
   <script>
-    // Affiche uniquement la section demandée
+    // Affiche uniquement la section demandÃ©e
     function showSection(id) {
       ['ingredients', 'recettes', 'planning', 'courses', 'setup'].forEach(sec => {
         document.getElementById(sec).classList.toggle('hidden', sec !== id);
       });
     }
-    showSection('ingredients'); // Section affichée par défaut
+    showSection('ingredients'); // Section affichÃ©e par dÃ©faut
   </script>
 
 </body>
 </html>
+
