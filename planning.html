@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf_8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Planning Semaine</title>
-  <link rel="stylesheet" href="Styles/Style_planning.css" />
+  <link rel="stylesheet" href="/Site/Styles/style_planning.css" />
 </head>
 <body>
   <!-- ===== BARRE DE NAVIGATION ===== -->
   <nav>
-    <a href="index.html">Ingrédients</a>
+    <a href="index.html">IngrÃ©dients</a>
     <a href="recette.html">Recettes</a>
     <a href="planning.html">Planning Semaine</a>
     <a href="courses.html">Liste de Courses</a>
-    <a href="setup.html">Paramètres</a>
+    <a href="setup.html">ParamÃ¨tres</a>
   </nav>
 
   <!-- ===== CONTENU PRINCIPAL ===== -->
@@ -49,7 +49,7 @@
 
     const jours = ["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
 
-    // === Génération dynamique du HTML pour chaque jour ===
+    // === GÃ©nÃ©ration dynamique du HTML pour chaque jour ===
     function generateJourHTML(jour) {
       return `
         <div class="jour-card">
@@ -58,7 +58,7 @@
             <thead>
               <tr>
                 <th>Repas</th>
-                <th>Entrée</th>
+                <th>EntrÃ©e</th>
                 <th>Plat</th>
                 <th>Dessert</th>
               </tr>
@@ -79,13 +79,13 @@
             </tbody>
           </table>
           <button id="reset-${jour}" class="reset-btn">&#x267B; Reset</button>
-          <h4>Récapitulatif</h4>
+          <h4>RÃ©capitulatif</h4>
           <table id="recap-${jour}">
             <thead>
               <tr>
-                <th>Ingrédient</th>
-                <th>Quantité</th>
-                <th>Unité</th>
+                <th>IngrÃ©dient</th>
+                <th>QuantitÃ©</th>
+                <th>UnitÃ©</th>
                 <th>Courses</th>
               </tr>
             </thead>
@@ -111,7 +111,7 @@
       });
     }
 
-    // === Sauvegarder une sélection dans Firestore ===
+    // === Sauvegarder une sÃ©lection dans Firestore ===
     function setupSelectSave() {
       document.querySelectorAll(".recette-select").forEach(select => {
         select.addEventListener("change", async () => {
@@ -157,7 +157,7 @@
       });
     }
 
-    // === Conversion Quantité ===
+    // === Conversion QuantitÃ© ===
     function convertToLargestUnit(ingredientsTotal) {
       const result = {};
       const massUnits = ['mg','g','kg'];
@@ -219,8 +219,8 @@
       return result;
     }
 
-    // === Récapitulatif ===
-    // === Récapitulatif ===
+    // === RÃ©capitulatif ===
+    // === RÃ©capitulatif ===
 async function updateRecapJour(jour) {
   const recapBody = document.querySelector(`#recap-${jour} tbody`);
   recapBody.innerHTML = '';
@@ -264,7 +264,7 @@ async function updateRecapJour(jour) {
 
     const checkbox = tr.querySelector('.acheter-checkbox');
 
-    // Quand on coche/décoche
+    // Quand on coche/dÃ©coche
     checkbox.addEventListener('change', async (e) => {
       const checked = e.target.checked;
       const ingredient = e.target.dataset.ingredient;
@@ -284,7 +284,7 @@ async function updateRecapJour(jour) {
       }
     });
 
-    // ?? Mise à jour automatique si déjà coché
+    // ?? Mise Ã  jour automatique si dÃ©jÃ  cochÃ©
     if (coursesData[ing]) {
       const docRef = db.collection('courses').doc(jour);
       const docData = {};
@@ -325,19 +325,20 @@ async function updateRecapJour(jour) {
       // Initialisation
       updateScrollbar();
 
-      // Défilement via la barre
+      // DÃ©filement via la barre
       scrollbar.addEventListener("input", () => {
         container.scrollLeft = scrollbar.value;
       });
 
-      // Défilement manuel du tableau
+      // DÃ©filement manuel du tableau
       container.addEventListener("scroll", () => {
         scrollbar.value = container.scrollLeft;
       });
 
-      // Mettre à jour si la fenêtre change de taille
+      // Mettre Ã  jour si la fenÃªtre change de taille
       window.addEventListener("resize", updateScrollbar);
     });
   </script>
 </body>
 </html>
+
