@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Recettes</title>
-  <link rel="stylesheet" href="Styles/Style_recette.css">
+  <link rel="stylesheet" href="Styles/style_recette.css">
 </head>
 <body>
   <nav>
@@ -25,6 +26,7 @@
     <section class="recipes" id="recipesContainer"></section>
   </div>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 
@@ -43,19 +45,16 @@
     let allIngredients = [];
     let allUnites = [];
 
-    // Récupération des ingrédients
     async function getIngredients() {
       const snapshot = await db.collection("ingredients").get();
       allIngredients = snapshot.docs.map(doc => doc.data().nom);
     }
 
-    // Récupération des unités
     async function getUnites() {
       const snapshot = await db.collection("Unites").get();
       allUnites = snapshot.docs.map(doc => doc.data().nom);
     }
 
-    // Génération des lignes pour une recette
     function generateRecipeRows(tbody, lignes = []) {
       for (let i = 0; i < 20; i++) {
         const row = document.createElement("tr");
@@ -100,14 +99,12 @@
           uniteSelect.value = lignes[i].unite || "";
         }
 
-        // Sauvegarde automatique dès qu'il y a un changement
         ingredientSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
         row.cells[1].addEventListener("input", () => saveRecipeAuto(row.closest("article")));
         uniteSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
       });
     }
 
-    // Ajout d'une recette dans le DOM
     function addRecipeToDOM(recetteData) {
       const container = document.getElementById("recipesContainer");
       const article = document.createElement("article");
@@ -134,11 +131,9 @@
       const tbody = article.querySelector(".recipe-body");
       generateRecipeRows(tbody, recetteData.lignes || []);
 
-      // Sauvegarde automatique du nom de la recette
       const titre = article.querySelector("h2");
       titre.addEventListener("input", () => saveRecipeAuto(article));
 
-      // Bouton de suppression
       const deleteBtn = article.querySelector(".delete-recipe-btn");
       deleteBtn.onclick = async () => {
         if (!confirm(`🗑 Supprimer la recette "${titre.textContent}" ?`)) return;
@@ -154,7 +149,6 @@
       };
     }
 
-    // Mise à jour de la liste de navigation
     function updateRecipeList() {
       const list = document.getElementById("recipeList");
       list.innerHTML = "";
@@ -168,7 +162,6 @@
       });
     }
 
-    // Fonction de sauvegarde automatique
     async function saveRecipeAuto(article) {
       const titre = article.querySelector("h2");
       const nouvelleNom = titre.textContent.trim();
@@ -204,7 +197,6 @@
       }
     }
 
-    // Création d'une nouvelle recette
     document.getElementById("newRecipeBtn").onclick = async () => {
       const nomRecette = prompt("Nom de la nouvelle recette :");
       if (!nomRecette) return;
@@ -219,7 +211,6 @@
       updateRecipeList();
     };
 
-    // Chargement de toutes les recettes
     async function loadAllRecipes() {
       await getIngredients();
       await getUnites();
@@ -228,14 +219,11 @@
       const container = document.getElementById("recipesContainer");
       container.innerHTML = "";
 
-      snapshot.docs.forEach(doc => {
-        addRecipeToDOM(doc.data());
-      });
+      snapshot.docs.forEach(doc => addRecipeToDOM(doc.data()));
       updateRecipeList();
     }
 
     document.addEventListener("DOMContentLoaded", loadAllRecipes);
   </script>
-
 </body>
 </html>
