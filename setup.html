@@ -1,44 +1,44 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf_8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Paramètres - Unités de mesure</title>
-  <link rel="stylesheet" href="Styles/Style_setup.css" />
+  <title>ParamÃ¨tres - UnitÃ©s de mesure</title>
+  <link rel="stylesheet" href="/Site/Styles/style_setup.css" />
 </head>
 <body>
   <!-- ===== BARRE DE NAVIGATION ===== -->
   <nav>
-    <a href="index.html">Ingrédients</a>
+    <a href="index.html">IngrÃ©dients</a>
     <a href="recette.html">Recettes</a>
     <a href="planning.html">Planning Semaine</a>
 	<a href="courses.html">Liste de Courses</a>
-    <a href="setup.html">Paramètres</a>
+    <a href="setup.html">ParamÃ¨tres</a>
   </nav>
 
   <!-- ===== CONTENU PRINCIPAL ===== -->
   <div class="container">
-    <h2>Paramètres</h2>
+    <h2>ParamÃ¨tres</h2>
 
     <div style="text-align: center; margin-bottom: 1em;">
-      <button id="clearAllUnitsBtn">Effacer toutes les unités</button>
+      <button id="clearAllUnitsBtn">Effacer toutes les unitÃ©s</button>
     </div>
 
-    <!-- ===== TABLEAU DES UNITÉS ===== -->
+    <!-- ===== TABLEAU DES UNITÃ‰S ===== -->
     <table class="excel-table dotted-borders" id="unitsTable">
       <thead>
         <tr>
-          <th>Unité de mesure</th>
+          <th>UnitÃ© de mesure</th>
         </tr>
         <tr id="inputRow">
-          <th><input type="text" placeholder="Ajouter une unité..." /></th>
+          <th><input type="text" placeholder="Ajouter une unitÃ©..." /></th>
         </tr>
       </thead>
       <tbody id="unitsBody"></tbody>
     </table>
   </div>
 
-  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des unités) ===== -->
+  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des unitÃ©s) ===== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
@@ -62,7 +62,7 @@
     const inputUnit = document.querySelector('#inputRow input');
     const tbody = document.getElementById('unitsBody');
 
-    // === Rafraîchit le tableau HTML des unités ===
+    // === RafraÃ®chit le tableau HTML des unitÃ©s ===
     function updateUnitsTable() {
       tbody.innerHTML = '';
       unitsData.forEach((unit, index) => {
@@ -74,9 +74,9 @@
         td.appendChild(span);
 
         const btn = document.createElement('button');
-        btn.textContent = '×';
+        btn.textContent = 'Ã—';
         btn.className = 'delete-btn';
-        btn.title = 'Supprimer cette unité';
+        btn.title = 'Supprimer cette unitÃ©';
         btn.addEventListener('click', () => deleteUnit(index));
         td.appendChild(btn);
 
@@ -104,7 +104,7 @@
       updateUnitsTable();
     }
 
-    // === Suppression d'une unité ===
+    // === Suppression d'une unitÃ© ===
     async function deleteUnit(index) {
       const docId = unitsIds[index];
       if (!docId) return;
@@ -118,7 +118,7 @@
       }
     }
 
-    // === Ajout via champ d'entrée ===
+    // === Ajout via champ d'entrÃ©e ===
     inputUnit.addEventListener('change', async () => {
       const value = inputUnit.value.trim();
       inputUnit.value = '';
@@ -129,7 +129,7 @@
       await addToFirestore(value);
     });
 
-    // === Supprimer toutes les unités ===
+    // === Supprimer toutes les unitÃ©s ===
     async function clearAllUnits() {
       const snapshot = await getDocs(collection(db, "Unites"));
       const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "Unites", docSnap.id)));
@@ -140,9 +140,9 @@
     }
 
     document.getElementById('clearAllUnitsBtn').addEventListener('click', async () => {
-      if (confirm("Êtes-vous sûr de vouloir effacer toutes les unités ? Cette action est irréversible.")) {
+      if (confirm("ÃŠtes-vous sÃ»r de vouloir effacer toutes les unitÃ©s ? Cette action est irrÃ©versible.")) {
         await clearAllUnits();
-        alert("Toutes les unités ont été effacées.");
+        alert("Toutes les unitÃ©s ont Ã©tÃ© effacÃ©es.");
       }
     });
 
@@ -150,3 +150,4 @@
   </script>
 </body>
 </html>
+
