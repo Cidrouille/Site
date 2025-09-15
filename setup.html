@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf_8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paramètres - Unités de mesure</title>
+  <link rel="stylesheet" href="Styles/Style_setup.css" />
+</head>
+<body>
+  <!-- ===== BARRE DE NAVIGATION ===== -->
+  <nav>
+    <a href="index.html">Ingrédients</a>
+    <a href="recette.html">Recettes</a>
+    <a href="planning.html">Planning Semaine</a>
+	<a href="courses.html">Liste de Courses</a>
+    <a href="setup.html">Paramètres</a>
+  </nav>
+
+  <!-- ===== CONTENU PRINCIPAL ===== -->
+  <div class="container">
+    <h2>Paramètres</h2>
+
+    <div style="text-align: center; margin-bottom: 1em;">
+      <button id="clearAllUnitsBtn">Effacer toutes les unités</button>
+    </div>
+
+    <!-- ===== TABLEAU DES UNITÉS ===== -->
+    <table class="excel-table dotted-borders" id="unitsTable">
+      <thead>
+        <tr>
+          <th>Unité de mesure</th>
+        </tr>
+        <tr id="inputRow">
+          <th><input type="text" placeholder="Ajouter une unité..." /></th>
+        </tr>
+      </thead>
+      <tbody id="unitsBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des unités) ===== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    // === Configuration Firebase ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
+      authDomain: "liste-de-courses-8a78d.firebaseapp.com",
+      projectId: "liste-de-courses-8a78d",
+      storageBucket: "liste-de-courses-8a78d.appspot.com",
+      messagingSenderId: "90294670968",
+      appId: "1:90294670968:web:901f321930a3a6342dbf8d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const unitsData = [];
+    const unitsIds = [];
+
+    const inputUnit = document.querySelector('#inputRow input');
+    const tbody = document.getElementById('unitsBody');
+
+    // === Rafraîchit le tableau HTML des unités ===
+    function updateUnitsTable() {
+      tbody.innerHTML = '';
+      unitsData.forEach((unit, index) => {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+
+        const span = document.createElement('span');
+        span.textContent = unit;
+        td.appendChild(span);
+
+        const btn = document.createElement('button');
+        btn.textContent = '×';
+        btn.className = 'delete-btn';
+        btn.title = 'Supprimer cette unité';
+        btn.addEventListener('click', () => deleteUnit(index));
+        td.appendChild(btn);
+
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      });
+    }
+
+    // === Ajout dans Firestore ===
+    async function addToFirestore(value) {
+      const docRef = await addDoc(collection(db, "Unites"), { nom: value });
+      unitsIds.push(docRef.id);
+    }
+
+    // === Chargement depuis Firestore ===
+    async function loadFromFirestore() {
+      const snapshot = await getDocs(collection(db, "Unites"));
+      unitsData.length = 0;
+      unitsIds.length = 0;
+      snapshot.forEach(docSnap => {
+        unitsData.push(docSnap.data().nom);
+        unitsIds.push(docSnap.id);
+      });
+      unitsData.sort((a, b) => a.localeCompare(b));
+      updateUnitsTable();
+    }
+
+    // === Suppression d'une unité ===
+    async function deleteUnit(index) {
+      const docId = unitsIds[index];
+      if (!docId) return;
+      try {
+        await deleteDoc(doc(db, "Unites", docId));
+        unitsData.splice(index, 1);
+        unitsIds.splice(index, 1);
+        updateUnitsTable();
+      } catch (err) {
+        alert("Erreur lors de la suppression : " + err.message);
+      }
+    }
+
+    // === Ajout via champ d'entrée ===
+    inputUnit.addEventListener('change', async () => {
+      const value = inputUnit.value.trim();
+      inputUnit.value = '';
+      if (!value || unitsData.includes(value)) return;
+      unitsData.push(value);
+      unitsData.sort((a, b) => a.localeCompare(b));
+      updateUnitsTable();
+      await addToFirestore(value);
+    });
+
+    // === Supprimer toutes les unités ===
+    async function clearAllUnits() {
+      const snapshot = await getDocs(collection(db, "Unites"));
+      const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "Unites", docSnap.id)));
+      await Promise.all(batchDeletes);
+      unitsData.length = 0;
+      unitsIds.length = 0;
+      updateUnitsTable();
+    }
+
+    document.getElementById('clearAllUnitsBtn').addEventListener('click', async () => {
+      if (confirm("Êtes-vous sûr de vouloir effacer toutes les unités ? Cette action est irréversible.")) {
+        await clearAllUnits();
+        alert("Toutes les unités ont été effacées.");
+      }
+    });
+
+    await loadFromFirestore();
+  </script>
+</body>
+</html>
