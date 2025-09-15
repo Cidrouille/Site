@@ -103,7 +103,7 @@ p .centered-reminder {
 }
 
 .excel-table {
-    table-layout: fixed; /* répartit la largeur uniformément */
+    table-layout: fixed; /* rÃ©partit la largeur uniformÃ©ment */
     width: 100%;         /* prend toute la largeur du conteneur */
 }
 
@@ -111,7 +111,7 @@ p .centered-reminder {
     background-color: #f7f9fc;
 }
 
-/* Hauteur augmentée à partir de la 4ème ligne du tbody */
+/* Hauteur augmentÃ©e Ã  partir de la 4Ã¨me ligne du tbody */
 .excel-table tbody tr:nth-child(n+1) td {
     padding-top: 0.8rem;
     padding-bottom: 0.8rem;
@@ -120,9 +120,9 @@ p .centered-reminder {
 .excel-table tbody td {
     min-width: 0;          /* supprimer la largeur minimale fixe */
     font-family: monospace;
-    word-wrap: break-word; /* autoriser le retour à la ligne */
-    white-space: normal;   /* autoriser le retour à la ligne */
-    padding: 0.4rem 0.6rem; /* réduire un peu le padding */
+    word-wrap: break-word; /* autoriser le retour Ã  la ligne */
+    white-space: normal;   /* autoriser le retour Ã  la ligne */
+    padding: 0.4rem 0.6rem; /* rÃ©duire un peu le padding */
 }
 
 .dotted-borders th,
@@ -161,7 +161,7 @@ p .centered-reminder {
 }
 
 
-/* === Message d’avertissement === */
+/* === Message dâ€™avertissement === */
 .centered-warning {
   text-align: center;
   font-weight: bold;
@@ -170,7 +170,7 @@ p .centered-reminder {
   font-style: italic;
 }
 
-/* === Table ingrédients avec bouton suppression === */
+/* === Table ingrÃ©dients avec bouton suppression === */
 table.excel-table td {
   position: relative;
   padding-right: 1.5em;
