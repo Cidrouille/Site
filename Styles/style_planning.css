@@ -133,12 +133,14 @@ b {
 
 #scrollbar-container {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 80%;
+    bottom: 10px;            /* un peu au-dessus du bas */
+    left: 50%;               /* centrage horizontal */
+    transform: translateX(-50%);
+    width: 60%;              /* largeur réduite (ajuste selon ton goût) */
     background: #f1f1f1;
     padding: 5px 10px;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    border-radius: 8px;
     z-index: 100;
 }
 
@@ -146,5 +148,6 @@ b {
     width: 100%;
 	cursor: pointer;
 }
+
 
 
