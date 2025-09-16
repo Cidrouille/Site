@@ -47,14 +47,12 @@
 
     async function getIngredients() {
       const snapshot = await db.collection("ingredients").get();
-      allIngredients = snapshot.docs.map(doc => doc.data().nom)
-                                    .sort((a, b) => a.localeCompare(b, 'fr'));
+      allIngredients = snapshot.docs.map(doc => doc.data().nom);
     }
-    
+
     async function getUnites() {
       const snapshot = await db.collection("Unites").get();
-      allUnites = snapshot.docs.map(doc => doc.data().nom)
-                               .sort((a, b) => a.localeCompare(b, 'fr'));
+      allUnites = snapshot.docs.map(doc => doc.data().nom);
     }
 
     function generateRecipeRows(tbody, lignes = []) {
@@ -133,7 +131,7 @@
       const tbody = article.querySelector(".recipe-body");
       generateRecipeRows(tbody, recetteData.lignes || []);
 
-      // ✅ Sauvegarde du titre uniquement au blur ou Enter
+      // Sauvegarde du titre uniquement au blur ou Enter
       const titre = article.querySelector("h2");
 
       // Quand on quitte le champ
@@ -175,14 +173,17 @@
       });
     }
 
+    // -------------------
+    // Sauvegarde automatique : correction pour permettre renommage même si lignes vides
+    // -------------------
     async function saveRecipeAuto(article) {
       const titre = article.querySelector("h2");
       const nouvelleNom = titre.textContent.trim();
       if (!nouvelleNom) return;
-    
+
       const ancienId = article.id;
       const nouveauId = nouvelleNom.toLowerCase().replace(/\s+/g, "_");
-    
+
       const rows = article.querySelectorAll("tbody tr");
       const recetteData = [];
       rows.forEach(row => {
@@ -191,32 +192,34 @@
         const unite = row.querySelector("select.unite-select").value.trim();
         if (ingredient) recetteData.push({ ingredient, quantite, unite });
       });
-    
-      if (recetteData.length === 0) return;
-    
+
+      // NOTE : On n'empêche plus la sauvegarde si recetteData.length === 0
+      // Cela permet de renommer une recette fraîchement créée sans ingrédients.
+
       try {
         if (ancienId !== nouveauId) {
-          // Vérifie si l'ancien document existe avant de supprimer
-          const oldDoc = await db.collection("recettes").doc(ancienId).get();
-          if (oldDoc.exists) {
-            await db.collection("recettes").doc(ancienId).delete();
+          // supprimer l'ancien doc seulement s'il existe
+          const oldDocRef = db.collection("recettes").doc(ancienId);
+          const oldDocSnap = await oldDocRef.get();
+          if (oldDocSnap.exists) {
+            await oldDocRef.delete();
           }
+          // mettre à jour l'id de l'article dans le DOM
           article.id = nouveauId;
         }
-    
-        // Sauvegarde ou mise à jour
+
+        // Sauvegarde (même si lignes vides)
         await db.collection("recettes").doc(nouveauId).set({
           nom: nouvelleNom,
           lignes: recetteData,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-    
+
         updateRecipeList();
       } catch (err) {
         console.error(err);
       }
     }
-
 
     document.getElementById("newRecipeBtn").onclick = async () => {
       const nomRecette = prompt("Nom de la nouvelle recette :");
@@ -248,5 +251,3 @@
   </script>
 </body>
 </html>
-
-
