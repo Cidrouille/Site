@@ -62,13 +62,13 @@
         row.innerHTML = `
           <td>
             <select class="ingredient-select">
-              <option value=""/option>
+              <option value=""></option>
             </select>
           </td>
           <td contenteditable="true"></td>
           <td>
             <select class="unite-select">
-              <option value=""/option>
+              <option value=""></option>
             </select>
           </td>
         `;
@@ -131,8 +131,19 @@
       const tbody = article.querySelector(".recipe-body");
       generateRecipeRows(tbody, recetteData.lignes || []);
 
+      // ✅ Sauvegarde du titre uniquement au blur ou Enter
       const titre = article.querySelector("h2");
-      titre.addEventListener("input", () => saveRecipeAuto(article));
+
+      // Quand on quitte le champ
+      titre.addEventListener("blur", () => saveRecipeAuto(article));
+
+      // Quand on valide avec Entrée
+      titre.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault(); // pas de retour à la ligne
+          titre.blur();       // déclenche blur → donc save
+        }
+      });
 
       const deleteBtn = article.querySelector(".delete-recipe-btn");
       deleteBtn.onclick = async () => {
@@ -227,5 +238,3 @@
   </script>
 </body>
 </html>
-
-
