@@ -157,23 +157,41 @@ const manualUnit = document.getElementById("manualUnit");
 // --- Charger ingrédients et unités ---
 async function loadIngredientsList() {
   const snap = await getDocs(collection(db,"ingredients"));
+  let ingredients = [];
   snap.forEach(docSnap=>{
     const data = docSnap.data();
     ingredientToCol[data.nom] = data.col;
+    ingredients.push(data.nom);
+  });
+
+  // Trier alphabétiquement
+  ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+
+  // Remplir la liste déroulante
+  ingredients.forEach(nom=>{
     const option = document.createElement("option");
-    option.value = data.nom;
-    option.textContent = data.nom;
+    option.value = nom;
+    option.textContent = nom;
     manualSelect.appendChild(option);
   });
 }
 
 async function loadUnitsList() {
   const snap = await getDocs(collection(db,"Unites"));
+  let unites = [];
   snap.forEach(docSnap=>{
     const data = docSnap.data();
+    unites.push(data.nom);
+  });
+
+  // Trier alphabétiquement
+  unites.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+
+  // Remplir la liste déroulante
+  unites.forEach(nom=>{
     const option = document.createElement("option");
-    option.value = data.nom;
-    option.textContent = data.nom;
+    option.value = nom;
+    option.textContent = nom;
     manualUnit.appendChild(option);
   });
 }
@@ -314,4 +332,5 @@ async function renderCourses(){
 
 </body>
 </html>
+
 
