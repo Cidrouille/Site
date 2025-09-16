@@ -47,12 +47,14 @@
 
     async function getIngredients() {
       const snapshot = await db.collection("ingredients").get();
-      allIngredients = snapshot.docs.map(doc => doc.data().nom);
+      allIngredients = snapshot.docs.map(doc => doc.data().nom)
+                                    .sort((a, b) => a.localeCompare(b, 'fr'));
     }
-
+    
     async function getUnites() {
       const snapshot = await db.collection("Unites").get();
-      allUnites = snapshot.docs.map(doc => doc.data().nom);
+      allUnites = snapshot.docs.map(doc => doc.data().nom)
+                               .sort((a, b) => a.localeCompare(b, 'fr'));
     }
 
     function generateRecipeRows(tbody, lignes = []) {
@@ -251,3 +253,4 @@
   </script>
 </body>
 </html>
+
