@@ -179,10 +179,10 @@
       const titre = article.querySelector("h2");
       const nouvelleNom = titre.textContent.trim();
       if (!nouvelleNom) return;
-
+    
       const ancienId = article.id;
       const nouveauId = nouvelleNom.toLowerCase().replace(/\s+/g, "_");
-
+    
       const rows = article.querySelectorAll("tbody tr");
       const recetteData = [];
       rows.forEach(row => {
@@ -191,24 +191,32 @@
         const unite = row.querySelector("select.unite-select").value.trim();
         if (ingredient) recetteData.push({ ingredient, quantite, unite });
       });
-
+    
       if (recetteData.length === 0) return;
-
+    
       try {
         if (ancienId !== nouveauId) {
-          await db.collection("recettes").doc(ancienId).delete();
+          // Vérifie si l'ancien document existe avant de supprimer
+          const oldDoc = await db.collection("recettes").doc(ancienId).get();
+          if (oldDoc.exists) {
+            await db.collection("recettes").doc(ancienId).delete();
+          }
           article.id = nouveauId;
         }
+    
+        // Sauvegarde ou mise à jour
         await db.collection("recettes").doc(nouveauId).set({
           nom: nouvelleNom,
           lignes: recetteData,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
+    
         updateRecipeList();
       } catch (err) {
         console.error(err);
       }
     }
+
 
     document.getElementById("newRecipeBtn").onclick = async () => {
       const nomRecette = prompt("Nom de la nouvelle recette :");
@@ -240,4 +248,5 @@
   </script>
 </body>
 </html>
+
 
