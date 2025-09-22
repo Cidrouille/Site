@@ -198,12 +198,20 @@
       renderCourses();
     });
     // --- Supprimer tout manuel ---
-    document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
-      if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
-      if(!confirm("Supprimer tous les ingrédients manuels ?")) return;
-      for(const item of manualIngredients){
-        await deleteDoc(doc(db,"courses",item.nom));
+    document.getElementById("clearManualBtn")?.addEventListener("click", async () => {
+      if (!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
+      if (!confirm("Supprimer tous les ingrédients manuels ?")) return;
+    
+      const snap = await getDocs(collection(db, "courses"));
+      const jours = ["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
+    
+      for (const docSnap of snap.docs) {
+        const id = docSnap.id;
+        if (!jours.includes(id)) { // supprimer uniquement ce qui n'est pas un jour
+          await deleteDoc(doc(db, "courses", id));
+        }
       }
+    
       manualIngredients = [];
       renderCourses();
     });
@@ -289,3 +297,4 @@
   </script>
 </body>
 </html>
+
