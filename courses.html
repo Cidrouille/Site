@@ -277,6 +277,17 @@ async function renderCourses(){
   const planningIngredients = await loadPlanningIngredients();
   const cols = Array.from({length:10},()=>[]);
 
+// --- Nettoyage des courses : supprimer les ingrédients du planning qui n'existent plus ---
+  const coursesSnap = await getDocs(collection(db, "courses"));
+  for (const courseDoc of coursesSnap.docs) {
+    const data = courseDoc.data();
+    if (!data.manuel) { // seulement si ce n'est pas manuel
+      if (!planningIngredients[courseDoc.id]) { // plus dans le planning
+        await deleteDoc(doc(db, "courses", courseDoc.id));
+      }
+    }
+  }
+
   Object.keys(planningIngredients).forEach(ing=>{
     const col = ingredientToCol[ing]??0;
     // planningIngredients[ing] contient { qty, unit, checked? }
@@ -348,3 +359,4 @@ async function renderCourses(){
 
 </body>
 </html>
+
