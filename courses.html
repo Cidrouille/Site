@@ -98,17 +98,13 @@ function convertAndSumIngredients(ingredientsRaw) {
   Object.keys(ingredientsRaw).forEach(ing => {
     const qtys = ingredientsRaw[ing].qtys;
 
-    // Déterminer type
     const units = qtys.map(q => q.unit.toLowerCase());
     let isMass = units.every(u => massUnits.includes(u));
     let isVol  = units.every(u => volUnits.includes(u));
 
     let totalBase = 0;
-    let preferredUnit = qtys[0].unit; // par défaut, la plus grande unité parmi les ingrédients
+    let preferredUnit = qtys[0].unit;
 
-	let planningChecked = {}; 
-
-    // Déterminer la plus grande unité d'origine
     if(isMass){
       if(units.includes('kg')) preferredUnit = 'Kg';
       else if(units.includes('g')) preferredUnit = 'g';
@@ -119,7 +115,6 @@ function convertAndSumIngredients(ingredientsRaw) {
       else preferredUnit = 'ml';
     }
 
-    // Somme en unité de base
     qtys.forEach(q=>{
       let qty = parseFloat(q.qty.toString().replace(',', '.')) || 0;
       const unit = q.unit.toLowerCase();
@@ -128,7 +123,6 @@ function convertAndSumIngredients(ingredientsRaw) {
       else totalBase += qty;
     });
 
-    // Convertir dans l'unité préférée
     let finalQty;
     if(isMass){
       if(preferredUnit === 'Kg') finalQty = totalBase / 1e6;
@@ -148,10 +142,10 @@ function convertAndSumIngredients(ingredientsRaw) {
   return result;
 }
 
-
 // --- Variables ---
 let ingredientToCol = {}; 
 let manualIngredients = [];
+let planningChecked = {}; 
 const coursesBody = document.getElementById("coursesBody");
 const manualSelect = document.getElementById("manualSelect");
 const manualUnit = document.getElementById("manualUnit");
@@ -165,11 +159,7 @@ async function loadIngredientsList() {
     ingredientToCol[data.nom] = data.col;
     ingredients.push(data.nom);
   });
-
-  // Trier alphabétiquement
   ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-
-  // Remplir la liste déroulante
   ingredients.forEach(nom=>{
     const option = document.createElement("option");
     option.value = nom;
@@ -185,11 +175,7 @@ async function loadUnitsList() {
     const data = docSnap.data();
     unites.push(data.nom);
   });
-
-  // Trier alphabétiquement
   unites.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-
-  // Remplir la liste déroulante
   unites.forEach(nom=>{
     const option = document.createElement("option");
     option.value = nom;
@@ -198,14 +184,13 @@ async function loadUnitsList() {
   });
 }
 
-// --- Charger courses existantes (manuelles + état checked global) ---
+// --- Charger courses existantes ---
 async function loadCoursesData() {
   manualIngredients = [];
   const snap = await getDocs(collection(db,"courses"));
   snap.forEach(docSnap=>{
     const data = docSnap.data();
 
-    // Stocker "checked" pour tous
     if (!ingredientToCol[docSnap.id]) {
       ingredientToCol[docSnap.id] = data.col ?? 0;
     }
@@ -220,10 +205,7 @@ async function loadCoursesData() {
         manuel: true
       });
     } else {
-      // Pour les ingrédients du planning : mémoriser checked
-      if (!planningChecked[docSnap.id]) {
-        planningChecked[docSnap.id] = data.checked || false;
-      }
+      planningChecked[docSnap.id] = data.checked || false;
     }
   });
 }
@@ -252,16 +234,15 @@ document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
   renderCourses();
 });
 
-// --- Récupérer ingrédients de la semaine avec somme et unité la plus grande ---
+// --- Récupérer ingrédients du planning ---
 async function loadPlanningIngredients() {
   const coursesSnap = await getDocs(collection(db,"courses"));
-  const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}, ...] } }
+  const ingredientsRaw = {};
 
   coursesSnap.forEach(dayDoc => {
     const dayData = dayDoc.data();
     Object.keys(dayData).forEach(ing => {
       const val = dayData[ing];
-      // On prend seulement les ingrédients au format { qty, unit }
       if (val && typeof val === "object" && "qty" in val && "unit" in val) {
         if (!ingredientsRaw[ing]) ingredientsRaw[ing] = { qtys: [] };
         ingredientsRaw[ing].qtys.push({ qty: val.qty, unit: val.unit });
@@ -309,7 +290,9 @@ async function renderCourses(){
             manuel: item.manuel||false
           }, {merge:true});
           item.checked = cb.checked;
-		  planningChecked[item.nom] = cb.checked;
+          if(!item.manuel){
+            planningChecked[item.nom] = cb.checked;
+          }
           td.style.textDecoration = cb.checked?"line-through":"none";
         });
         td.appendChild(cb);
@@ -346,6 +329,3 @@ async function renderCourses(){
 
 </body>
 </html>
-
-
-
