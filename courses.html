@@ -218,8 +218,18 @@
       return convertAndSumIngredients(ingredientsRaw);
     }
     // --- Rendu ---
-    async function renderCourses(){
+    async function renderCourses(){    
       const planningIngredients = await loadPlanningIngredients();
+
+      // 🔥 Nettoyage du localStorage : on garde seulement les ingrédients encore dans le planning
+      let saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
+      Object.keys(saved).forEach(ing => {
+        if (!planningIngredients[ing]) {
+          delete saved[ing];
+        }
+      });
+      localStorage.setItem("planningChecked", JSON.stringify(saved));
+      
       const cols = Array.from({length:10},()=>[]);
       Object.keys(planningIngredients).forEach(ing=>{
         const col = ingredientToCol[ing]??0;
@@ -294,3 +304,4 @@
   </script>
 </body>
 </html>
+
