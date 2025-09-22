@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="/Site/Styles/style_courses.css" />
 </head>
 <body>
+
   <!-- ===== BARRE DE NAVIGATION ===== -->
   <nav>
     <a href="index.html">Ingrédients</a>
@@ -15,6 +16,7 @@
     <a href="courses.html">Liste de Courses</a>
     <a href="setup.html">Paramètres</a>
   </nav>
+
   <!-- ===== CONTENEUR PRINCIPAL ===== -->
   <div class="container">
     <section id="courses">
@@ -22,7 +24,7 @@
       <p class="centered-warning">
         &#9888;&#65039; La liste est générée automatiquement à partir du planning de la semaine &#9888;&#65039;
       </p>
-  
+	  
       <!-- ===== FORMULAIRE AJOUT MANUEL ===== -->
       <div id="manualAdd" style="text-align:center; margin-bottom:20px;">
         <select id="manualSelect">
@@ -34,12 +36,14 @@
         </select>
         <button id="addManualBtn">Ajouter</button>
       </div>
+		
       <!-- Bouton pour supprimer tous les ingrédients manuels -->
       <div style="text-align:center; margin-bottom:20px;">
         <button id="clearManualBtn" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
           Supprimer tous les ingrédients manuels
         </button>
       </div>
+
       <!-- ===== TABLEAU LISTE DE COURSES ===== -->
       <table class="excel-table dotted-borders" id="coursesTable">
         <thead>
@@ -62,9 +66,11 @@
       </table>
     </section>
   </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
       authDomain: "liste-de-courses-8a78d.firebaseapp.com",
@@ -73,23 +79,30 @@
       messagingSenderId: "90294670968",
       appId: "1:90294670968:web:901f321930a3a6342dbf8d"
     };
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     // --- Conversion et somme des ingrédients ---
     function convertAndSumIngredients(ingredientsRaw) {
       const result = {};
       const massUnits = ['mg', 'g', 'kg'];
       const volUnits  = ['ml', 'cl', 'l'];
+
       const massToMg = { mg: 1, g: 1000, kg: 1e6 };
       const volToMl  = { ml: 1, cl: 10, l: 1000 };
+
       Object.keys(ingredientsRaw).forEach(ing => {
         const qtys = ingredientsRaw[ing].qtys;
+
         // Déterminer type
         const units = qtys.map(q => q.unit.toLowerCase());
         let isMass = units.every(u => massUnits.includes(u));
         let isVol  = units.every(u => volUnits.includes(u));
+
         let totalBase = 0;
         let preferredUnit = qtys[0].unit;
+
         // Déterminer la plus grande unité d'origine
         if (isMass) {
           if (units.includes('kg')) preferredUnit = 'Kg';
@@ -100,6 +113,7 @@
           else if (units.includes('cl')) preferredUnit = 'cL';
           else preferredUnit = 'ml';
         }
+
         // Somme en unité de base
         qtys.forEach(q => {
           let qty = parseFloat(q.qty.toString().replace(',', '.')) || 0;
@@ -108,6 +122,7 @@
           else if (isVol) totalBase += qty * volToMl[unit];
           else totalBase += qty;
         });
+
         // Conversion finale
         let finalQty;
         if (isMass) {
@@ -121,17 +136,21 @@
         } else {
           finalQty = totalBase;
         }
+
         finalQty = Math.round(finalQty * 100) / 100;
         result[ing] = { qty: finalQty, unit: preferredUnit };
       });
+
       return result;
     }
+
     // --- Variables ---
     let ingredientToCol = {};
     let manualIngredients = [];
     const coursesBody = document.getElementById("coursesBody");
     const manualSelect = document.getElementById("manualSelect");
     const manualUnit = document.getElementById("manualUnit");
+
     // --- Charger ingrédients et unités ---
     async function loadIngredientsList() {
       const snap = await getDocs(collection(db,"ingredients"));
@@ -141,8 +160,10 @@
         ingredientToCol[data.nom] = data.col;
         ingredients.push(data.nom);
       });
+
       // Trier alphabétiquement
       ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+
       // Remplir la liste déroulante
       ingredients.forEach(nom=>{
         const option = document.createElement("option");
@@ -151,6 +172,7 @@
         manualSelect.appendChild(option);
       });
     }
+
     async function loadUnitsList() {
       const snap = await getDocs(collection(db,"Unites"));
       let unites = [];
@@ -158,7 +180,9 @@
         const data = docSnap.data();
         unites.push(data.nom);
       });
+
       unites.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+
       unites.forEach(nom=>{
         const option = document.createElement("option");
         option.value = nom;
@@ -166,6 +190,7 @@
         manualUnit.appendChild(option);
       });
     }
+
     // --- Charger courses existantes (manuelles) ---
     async function loadCoursesData() {
       manualIngredients = [];
@@ -184,6 +209,7 @@
         }
       });
     }
+
     // --- Ajouter manuel ---
     document.getElementById("addManualBtn").addEventListener("click", async ()=>{
       const name = manualSelect.value;
@@ -191,12 +217,15 @@
       const unit = manualUnit.value;
       if(!name || !unit) return alert("Sélectionnez un ingrédient et une unité");
       const col = ingredientToCol[name]??0;
+
       await setDoc(doc(db,"courses",name), {
         checked:false, qty, unit, col, manuel:true
       });
+
       manualIngredients.push({nom:name, qty, unit, col, checked:false, manuel:true});
       renderCourses();
     });
+
     // --- Supprimer tout manuel ---
     document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
       if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
@@ -207,10 +236,12 @@
       manualIngredients = [];
       renderCourses();
     });
+
     // --- Récupérer ingrédients du planning ---
     async function loadPlanningIngredients() {
       const coursesSnap = await getDocs(collection(db,"courses"));
       const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}, ...] } }
+
       coursesSnap.forEach(dayDoc => {
         const dayData = dayDoc.data();
         Object.keys(dayData).forEach(ing => {
@@ -221,21 +252,27 @@
           }
         });
       });
+
       return convertAndSumIngredients(ingredientsRaw);
     }
+
     // --- Rendu ---
     async function renderCourses(){
       const planningIngredients = await loadPlanningIngredients();
       const cols = Array.from({length:10},()=>[]);
+
       Object.keys(planningIngredients).forEach(ing=>{
         const col = ingredientToCol[ing]??0;
         cols[col].push({nom:ing, ...planningIngredients[ing], checked:false});
       });
+
       manualIngredients.forEach(item=>{
         const col = item.col??0;
         cols[col].push({...item, checked:item.checked||false});
       });
+
       cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
+
       coursesBody.innerHTML="";
       const maxRows = Math.max(...cols.map(c=>c.length));
       for(let i=0;i<maxRows;i++){
@@ -261,6 +298,7 @@
             td.appendChild(cb);
             td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
             if(item.checked) td.style.textDecoration = "line-through";
+
             if(item.manuel){
               const delBtn = document.createElement("span");
               delBtn.textContent=" ❌";
@@ -279,6 +317,7 @@
         coursesBody.appendChild(tr);
       }
     }
+
     // --- Initialisation ---
     (async function init(){
       await loadIngredientsList();
@@ -287,5 +326,6 @@
       renderCourses();
     })();
   </script>
+
 </body>
 </html>
