@@ -220,26 +220,38 @@
     // --- Rendu ---
     async function renderCourses(){    
       const planningIngredients = await loadPlanningIngredients();
-
-      // 🔥 Nettoyage du localStorage : on garde seulement les ingrédients encore dans le planning
-      let saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
-      Object.keys(saved).forEach(ing => {
-        if (!planningIngredients[ing]) {
-          delete saved[ing];
-        }
-      });
-      localStorage.setItem("planningChecked", JSON.stringify(saved));
-      
+    
       const cols = Array.from({length:10},()=>[]);
+    
+      // --- Ajouter les ingrédients du planning ---
       Object.keys(planningIngredients).forEach(ing=>{
         const col = ingredientToCol[ing]??0;
         cols[col].push({nom:ing, ...planningIngredients[ing], checked:false, manuel:false});
       });
+    
+      // --- Ajouter les ingrédients manuels ---
       manualIngredients.forEach(item=>{
         const col = item.col??0;
         cols[col].push({...item, checked:item.checked||false, manuel:true});
       });
+    
+      // --- Nettoyage du localStorage ---
+      let saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
+      const allCurrentIngredients = [
+        ...Object.keys(planningIngredients),
+        ...manualIngredients.map(i => i.nom)
+      ];
+      Object.keys(saved).forEach(ing => {
+        if (!allCurrentIngredients.includes(ing)) {
+          delete saved[ing];
+        }
+      });
+      localStorage.setItem("planningChecked", JSON.stringify(saved));
+    
+      // --- Tri alphabétique par colonne ---
       cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
+    
+      // --- Construction du tableau ---
       coursesBody.innerHTML="";
       const maxRows = Math.max(...cols.map(c=>c.length));
       for(let i=0;i<maxRows;i++){
@@ -250,16 +262,20 @@
           if(item){
             const cb = document.createElement("input");
             cb.type="checkbox";
+    
             // --- restaurer l'état ---
             if(!item.manuel){
               const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
               if(saved[item.nom]) item.checked = true;
             }
             cb.checked = item.checked;
+    
             cb.addEventListener("change", async ()=>{
               item.checked = cb.checked;
               td.style.textDecoration = cb.checked ? "line-through" : "none";
+    
               if(item.manuel){
+                // Sauvegarde Firestore
                 await setDoc(doc(db,"courses",item.nom), {
                   checked: cb.checked,
                   qty: item.qty||0,
@@ -268,14 +284,18 @@
                   manuel: true
                 }, {merge:true});
               } else {
+                // Sauvegarde locale
                 const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
                 saved[item.nom] = cb.checked;
                 localStorage.setItem("planningChecked", JSON.stringify(saved));
               }
             });
+    
             td.appendChild(cb);
             td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
+    
             if(item.checked) td.style.textDecoration = "line-through";
+    
             if(item.manuel){
               const delBtn = document.createElement("span");
               delBtn.textContent=" ❌";
@@ -294,6 +314,7 @@
         coursesBody.appendChild(tr);
       }
     }
+
     // --- Initialisation ---
     (async function init(){
       await loadIngredientsList();
@@ -304,4 +325,5 @@
   </script>
 </body>
 </html>
+
 
