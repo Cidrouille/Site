@@ -273,11 +273,11 @@ async function loadPlanningIngredients() {
 }
 
 // --- Rendu ---
-async function renderCourses(){
+async function renderCourses() {
   const planningIngredients = await loadPlanningIngredients();
-  const cols = Array.from({length:10},()=>[]);
+  const cols = Array.from({ length: 10 }, () => []);
 
-// --- Nettoyage des courses : supprimer les ingrédients du planning qui n'existent plus ---
+  // --- Nettoyage des courses : supprimer les ingrédients du planning qui n'existent plus ---
   const coursesSnap = await getDocs(collection(db, "courses"));
   for (const courseDoc of coursesSnap.docs) {
     const data = courseDoc.data();
@@ -288,55 +288,67 @@ async function renderCourses(){
     }
   }
 
-  Object.keys(planningIngredients).forEach(ing=>{
-    const col = ingredientToCol[ing]??0;
-    // planningIngredients[ing] contient { qty, unit, checked? }
-    cols[col].push({nom:ing, ...planningIngredients[ing], manuel:false});
+  // --- Ajouter les ingrédients du planning avec l'état checked depuis Firebase ---
+  for (const ing of Object.keys(planningIngredients)) {
+    const col = ingredientToCol[ing] ?? 0;
+    let checked = false;
+
+    // Vérifier si cet ingrédient existe déjà dans courses pour récupérer l'état checked
+    const courseSnap = await getDocs(collection(db, "courses"));
+    const courseDoc = courseSnap.docs.find(d => d.id === ing);
+    if (courseDoc) {
+      checked = !!courseDoc.data().checked;
+    }
+
+    cols[col].push({ nom: ing, ...planningIngredients[ing], checked, manuel: false });
+  }
+
+  // Ajouter les ingrédients manuels
+  manualIngredients.forEach(item => {
+    const col = item.col ?? 0;
+    cols[col].push({ ...item, checked: item.checked || false });
   });
 
-  manualIngredients.forEach(item=>{
-    const col = item.col??0;
-    cols[col].push({...item, checked:item.checked||false});
-  });
+  // Trier les colonnes par ordre alphabétique
+  cols.forEach(col => col.sort((a, b) => a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" })));
 
-  cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
-
-  coursesBody.innerHTML="";
-  const maxRows = Math.max(0, ...cols.map(c=>c.length));
-  for(let i=0;i<maxRows;i++){
+  // Affichage dans le tableau
+  coursesBody.innerHTML = "";
+  const maxRows = Math.max(0, ...cols.map(c => c.length));
+  for (let i = 0; i < maxRows; i++) {
     const tr = document.createElement("tr");
-    for(let j=0;j<10;j++){
+    for (let j = 0; j < 10; j++) {
       const td = document.createElement("td");
       const item = cols[j][i];
-      if(item){
+      if (item) {
         const cb = document.createElement("input");
-        cb.type="checkbox";
+        cb.type = "checkbox";
         cb.checked = !!item.checked;
-        cb.addEventListener("change", async ()=>{
-          // Mettre à jour le document correspondant (créera s'il n'existe pas)
-          await setDoc(doc(db,"courses",item.nom), {
+        cb.addEventListener("change", async () => {
+          await setDoc(doc(db, "courses", item.nom), {
             checked: cb.checked,
-            qty: item.qty||0,
-            unit: item.unit||"",
-            col: item.col||0,
-            manuel: item.manuel||false
-          }, {merge:true});
+            qty: item.qty || 0,
+            unit: item.unit || "",
+            col: item.col || 0,
+            manuel: item.manuel || false
+          }, { merge: true });
 
           item.checked = cb.checked;
           td.style.textDecoration = cb.checked ? "line-through" : "none";
         });
-        td.appendChild(cb);
-        td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
-        if(item.checked) td.style.textDecoration = "line-through";
 
-        if(item.manuel){
+        td.appendChild(cb);
+        td.appendChild(document.createTextNode(` ${item.nom} (${item.qty || ""} ${item.unit || ""})`));
+        if (item.checked) td.style.textDecoration = "line-through";
+
+        if (item.manuel) {
           const delBtn = document.createElement("span");
-          delBtn.textContent=" ❌";
-          delBtn.style.color="red";
-          delBtn.style.cursor="pointer";
-          delBtn.addEventListener("click", async ()=>{
-            await deleteDoc(doc(db,"courses",item.nom));
-            manualIngredients = manualIngredients.filter(m=>m.nom!==item.nom);
+          delBtn.textContent = " ❌";
+          delBtn.style.color = "red";
+          delBtn.style.cursor = "pointer";
+          delBtn.addEventListener("click", async () => {
+            await deleteDoc(doc(db, "courses", item.nom));
+            manualIngredients = manualIngredients.filter(m => m.nom !== item.nom);
             renderCourses();
           });
           td.appendChild(delBtn);
@@ -347,6 +359,7 @@ async function renderCourses(){
     coursesBody.appendChild(tr);
   }
 }
+
 
 // --- Initialisation ---
 (async function init(){
@@ -359,4 +372,5 @@ async function renderCourses(){
 
 </body>
 </html>
+
 
