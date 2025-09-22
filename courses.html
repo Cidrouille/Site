@@ -106,6 +106,8 @@ function convertAndSumIngredients(ingredientsRaw) {
     let totalBase = 0;
     let preferredUnit = qtys[0].unit; // par défaut, la plus grande unité parmi les ingrédients
 
+	let planningChecked = {}; 
+
     // Déterminer la plus grande unité d'origine
     if(isMass){
       if(units.includes('kg')) preferredUnit = 'Kg';
@@ -196,21 +198,32 @@ async function loadUnitsList() {
   });
 }
 
-// --- Charger courses existantes (manuelles) ---
+// --- Charger courses existantes (manuelles + état checked global) ---
 async function loadCoursesData() {
   manualIngredients = [];
   const snap = await getDocs(collection(db,"courses"));
   snap.forEach(docSnap=>{
     const data = docSnap.data();
+
+    // Stocker "checked" pour tous
+    if (!ingredientToCol[docSnap.id]) {
+      ingredientToCol[docSnap.id] = data.col ?? 0;
+    }
+
     if(data.manuel){
       manualIngredients.push({
         nom: docSnap.id,
         qty: data.qty,
         unit: data.unit,
         col: data.col,
-        checked: data.checked,
+        checked: data.checked || false,
         manuel: true
       });
+    } else {
+      // Pour les ingrédients du planning : mémoriser checked
+      if (!planningChecked[docSnap.id]) {
+        planningChecked[docSnap.id] = data.checked || false;
+      }
     }
   });
 }
@@ -266,7 +279,7 @@ async function renderCourses(){
 
   Object.keys(planningIngredients).forEach(ing=>{
     const col = ingredientToCol[ing]??0;
-    cols[col].push({nom:ing, ...planningIngredients[ing], checked:false});
+    cols[col].push({nom:ing, ...planningIngredients[ing], checked: planningChecked[ing] || false});
   });
 
   manualIngredients.forEach(item=>{
@@ -296,6 +309,7 @@ async function renderCourses(){
             manuel: item.manuel||false
           }, {merge:true});
           item.checked = cb.checked;
+		  planningChecked[item.nom] = cb.checked;
           td.style.textDecoration = cb.checked?"line-through":"none";
         });
         td.appendChild(cb);
@@ -332,5 +346,6 @@ async function renderCourses(){
 
 </body>
 </html>
+
 
 
