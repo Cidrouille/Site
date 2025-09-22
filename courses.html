@@ -25,24 +25,24 @@
         &#9888;&#65039; La liste est générée automatiquement à partir du planning de la semaine &#9888;&#65039;
       </p>
 	  
-      <!-- ===== FORMULAIRE AJOUT MANUEL ===== -->
-      <div id="manualAdd" style="text-align:center; margin-bottom:20px;">
-        <select id="manualSelect">
-          <option value="">Ajouter un ingrédient</option>
-        </select>
-        <input type="number" id="manualQty" placeholder="Quantité">
-        <select id="manualUnit">
-          <option value="">Sélectionner une unité</option>
-        </select>
-        <button id="addManualBtn">Ajouter</button>
-      </div>
+	  <!-- ===== FORMULAIRE AJOUT MANUEL ===== -->
+		<div id="manualAdd" style="text-align:center; margin-bottom:20px;">
+		  <select id="manualSelect">
+			<option value="">Ajouter un ingrédient</option>
+		  </select>
+		  <input type="number" id="manualQty" placeholder="Quantité">
+		  <select id="manualUnit">
+			<option value="">Sélectionner une unité</option>
+		  </select>
+		  <button id="addManualBtn">Ajouter</button>
+		</div>
 		
-      <!-- Bouton pour supprimer tous les ingrédients manuels -->
-      <div style="text-align:center; margin-bottom:20px;">
-        <button id="clearManualBtn" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
-          Supprimer tous les ingrédients manuels
-        </button>
-      </div>
+		<!-- Bouton pour supprimer tous les ingrédients manuels -->
+		<div style="text-align:center; margin-bottom:20px;">
+		  <button id="clearManualBtn" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
+			Supprimer tous les ingrédients manuels
+		  </button>
+		</div>
 
       <!-- ===== TABLEAU LISTE DE COURSES ===== -->
       <table class="excel-table dotted-borders" id="coursesTable">
@@ -67,285 +67,284 @@
     </section>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
-      authDomain: "liste-de-courses-8a78d.firebaseapp.com",
-      projectId: "liste-de-courses-8a78d",
-      storageBucket: "liste-de-courses-8a78d.appspot.com",
-      messagingSenderId: "90294670968",
-      appId: "1:90294670968:web:901f321930a3a6342dbf8d"
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
+  authDomain: "liste-de-courses-8a78d.firebaseapp.com",
+  projectId: "liste-de-courses-8a78d",
+  storageBucket: "liste-de-courses-8a78d.appspot.com",
+  messagingSenderId: "90294670968",
+  appId: "1:90294670968:web:901f321930a3a6342dbf8d"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    // --- Conversion et somme des ingrédients ---
-    function convertAndSumIngredients(ingredientsRaw) {
-      const result = {};
-      const massUnits = ['mg', 'g', 'kg'];
-      const volUnits  = ['ml', 'cl', 'l'];
+// --- Conversion et somme des ingrédients ---
+function convertAndSumIngredients(ingredientsRaw) {
+  const result = {};
 
-      const massToMg = { mg: 1, g: 1000, kg: 1e6 };
-      const volToMl  = { ml: 1, cl: 10, l: 1000 };
+  const massUnits = ['mg', 'g', 'kg'];
+  const volUnits  = ['ml', 'cl', 'l'];
 
-      Object.keys(ingredientsRaw).forEach(ing => {
-        const qtys = ingredientsRaw[ing].qtys;
+  const massToMg = { mg: 1, g: 1000, kg: 1e6 };
+  const volToMl  = { ml: 1, cl: 10, l: 1000 };
 
-        // Déterminer type
-        const units = qtys.map(q => q.unit.toLowerCase());
-        let isMass = units.every(u => massUnits.includes(u));
-        let isVol  = units.every(u => volUnits.includes(u));
+  Object.keys(ingredientsRaw).forEach(ing => {
+    const qtys = ingredientsRaw[ing].qtys;
 
-        let totalBase = 0;
-        let preferredUnit = qtys[0].unit;
+    // Déterminer type
+    const units = qtys.map(q => (q.unit || "").toLowerCase());
+    let isMass = units.every(u => massUnits.includes(u));
+    let isVol  = units.every(u => volUnits.includes(u));
 
-        // Déterminer la plus grande unité d'origine
-        if (isMass) {
-          if (units.includes('kg')) preferredUnit = 'Kg';
-          else if (units.includes('g')) preferredUnit = 'g';
-          else preferredUnit = 'mg';
-        } else if (isVol) {
-          if (units.includes('l')) preferredUnit = 'L';
-          else if (units.includes('cl')) preferredUnit = 'cL';
-          else preferredUnit = 'ml';
+    let totalBase = 0;
+    let preferredUnit = qtys[0].unit || "";
+
+    // Déterminer la plus grande unité d'origine
+    if(isMass){
+      if(units.includes('kg')) preferredUnit = 'Kg';
+      else if(units.includes('g')) preferredUnit = 'g';
+      else preferredUnit = 'mg';
+    } else if(isVol){
+      if(units.includes('l')) preferredUnit = 'L';
+      else if(units.includes('cl')) preferredUnit = 'cL';
+      else preferredUnit = 'ml';
+    }
+
+    // Somme en unité de base
+    qtys.forEach(q=>{
+      let qty = parseFloat(q.qty.toString().replace(',', '.')) || 0;
+      const unit = (q.unit || "").toLowerCase();
+      if(isMass) totalBase += (massToMg[unit] || 0) * qty;
+      else if(isVol) totalBase += (volToMl[unit] || 0) * qty;
+      else totalBase += qty;
+    });
+
+    // Convertir dans l'unité préférée
+    let finalQty;
+    if(isMass){
+      if(preferredUnit === 'Kg') finalQty = totalBase / 1e6;
+      else if(preferredUnit === 'g') finalQty = totalBase / 1000;
+      else finalQty = totalBase;
+    } else if(isVol){
+      if(preferredUnit === 'L') finalQty = totalBase / 1000;
+      else if(preferredUnit === 'cL') finalQty = totalBase / 10;
+      else finalQty = totalBase;
+    } else finalQty = totalBase;
+
+    finalQty = Math.round(finalQty * 100) / 100;
+
+    result[ing] = { qty: finalQty, unit: preferredUnit };
+  });
+
+  return result;
+}
+
+// --- Variables ---
+let ingredientToCol = {}; 
+let manualIngredients = [];
+const coursesBody = document.getElementById("coursesBody");
+const manualSelect = document.getElementById("manualSelect");
+const manualUnit = document.getElementById("manualUnit");
+
+// --- Charger ingrédients et unités (tri alphabétique) ---
+async function loadIngredientsList() {
+  const snap = await getDocs(collection(db,"ingredients"));
+  let ingredients = [];
+  snap.forEach(docSnap=>{
+    const data = docSnap.data();
+    ingredientToCol[data.nom] = data.col;
+    ingredients.push(data.nom);
+  });
+  ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+  ingredients.forEach(nom=>{
+    const option = document.createElement("option");
+    option.value = nom;
+    option.textContent = nom;
+    manualSelect.appendChild(option);
+  });
+}
+
+async function loadUnitsList() {
+  const snap = await getDocs(collection(db,"Unites"));
+  let unites = [];
+  snap.forEach(docSnap=>{
+    const data = docSnap.data();
+    unites.push(data.nom);
+  });
+  unites.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
+  unites.forEach(nom=>{
+    const option = document.createElement("option");
+    option.value = nom;
+    option.textContent = nom;
+    manualUnit.appendChild(option);
+  });
+}
+
+// --- Charger courses existantes (manuelles) ---
+async function loadCoursesData() {
+  manualIngredients = [];
+  const snap = await getDocs(collection(db,"courses"));
+  snap.forEach(docSnap=>{
+    const data = docSnap.data();
+    if(data.manuel){
+      manualIngredients.push({
+        nom: docSnap.id,
+        qty: data.qty,
+        unit: data.unit,
+        col: data.col,
+        checked: !!data.checked,
+        manuel: true
+      });
+    }
+  });
+}
+
+// --- Ajouter manuel ---
+document.getElementById("addManualBtn").addEventListener("click", async ()=>{
+  const name = manualSelect.value;
+  const qty = parseFloat(document.getElementById("manualQty").value)||0;
+  const unit = manualUnit.value;
+  if(!name || !unit) return alert("Sélectionnez un ingrédient et une unité");
+  const col = ingredientToCol[name]??0;
+
+  await setDoc(doc(db,"courses",name), { checked:false, qty, unit, col, manuel:true });
+  manualIngredients.push({nom:name, qty, unit, col, checked:false, manuel:true});
+  renderCourses();
+});
+
+// --- Supprimer tout manuel ---
+document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
+  if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
+  if(!confirm("Supprimer tous les ingrédients manuels ?")) return;
+  for(const item of manualIngredients){
+    await deleteDoc(doc(db,"courses",item.nom));
+  }
+  manualIngredients = [];
+  renderCourses();
+});
+
+// --- Récupérer ingrédients du planning (gestion des deux formats et lecture du checked) ---
+async function loadPlanningIngredients() {
+  const coursesSnap = await getDocs(collection(db,"courses"));
+  const ingredientsRaw = {}; // { ing: { qtys: [...] } }
+  const checkedMap = {};     // { ing: true/false }
+
+  coursesSnap.forEach(docSnap => {
+    const id = docSnap.id;
+    const data = docSnap.data();
+
+    // Skip manual entries (déjà traitées par loadCoursesData)
+    if (data && data.manuel) return;
+
+    // Cas 1 : document par ingrédient (doc.id = "Carotte"), champs qty/unit/checked
+    if (data && ('qty' in data) && ('unit' in data)) {
+      if (!ingredientsRaw[id]) ingredientsRaw[id] = { qtys: [] };
+      ingredientsRaw[id].qtys.push({ qty: data.qty, unit: data.unit });
+      if (data.checked) checkedMap[id] = true;
+    }
+
+    // Cas 2 : document "jour" qui contient des champs ingrédient: {qty,unit,...}
+    if (data && typeof data === 'object') {
+      Object.keys(data).forEach(key => {
+        const val = data[key];
+        if (val && typeof val === 'object' && ('qty' in val) && ('unit' in val)) {
+          if (!ingredientsRaw[key]) ingredientsRaw[key] = { qtys: [] };
+          ingredientsRaw[key].qtys.push({ qty: val.qty, unit: val.unit });
+          if (val.checked) checkedMap[key] = true;
         }
+      });
+    }
+  });
 
-        // Somme en unité de base
-        qtys.forEach(q => {
-          let qty = parseFloat(q.qty.toString().replace(',', '.')) || 0;
-          const unit = q.unit.toLowerCase();
-          if (isMass) totalBase += qty * massToMg[unit];
-          else if (isVol) totalBase += qty * volToMl[unit];
-          else totalBase += qty;
+  // Somme/conversion
+  const summed = convertAndSumIngredients(ingredientsRaw);
+
+  // Injecter l'état checked si présent
+  Object.keys(summed).forEach(ing => {
+    summed[ing].checked = !!checkedMap[ing];
+  });
+
+  return summed;
+}
+
+// --- Rendu ---
+async function renderCourses(){
+  const planningIngredients = await loadPlanningIngredients();
+  const cols = Array.from({length:10},()=>[]);
+
+  Object.keys(planningIngredients).forEach(ing=>{
+    const col = ingredientToCol[ing]??0;
+    // planningIngredients[ing] contient { qty, unit, checked? }
+    cols[col].push({nom:ing, ...planningIngredients[ing], manuel:false});
+  });
+
+  manualIngredients.forEach(item=>{
+    const col = item.col??0;
+    cols[col].push({...item, checked:item.checked||false});
+  });
+
+  cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
+
+  coursesBody.innerHTML="";
+  const maxRows = Math.max(0, ...cols.map(c=>c.length));
+  for(let i=0;i<maxRows;i++){
+    const tr = document.createElement("tr");
+    for(let j=0;j<10;j++){
+      const td = document.createElement("td");
+      const item = cols[j][i];
+      if(item){
+        const cb = document.createElement("input");
+        cb.type="checkbox";
+        cb.checked = !!item.checked;
+        cb.addEventListener("change", async ()=>{
+          // Mettre à jour le document correspondant (créera s'il n'existe pas)
+          await setDoc(doc(db,"courses",item.nom), {
+            checked: cb.checked,
+            qty: item.qty||0,
+            unit: item.unit||"",
+            col: item.col||0,
+            manuel: item.manuel||false
+          }, {merge:true});
+
+          item.checked = cb.checked;
+          td.style.textDecoration = cb.checked ? "line-through" : "none";
         });
+        td.appendChild(cb);
+        td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
+        if(item.checked) td.style.textDecoration = "line-through";
 
-        // Conversion finale
-        let finalQty;
-        if (isMass) {
-          if (preferredUnit === 'Kg') finalQty = totalBase / 1e6;
-          else if (preferredUnit === 'g') finalQty = totalBase / 1000;
-          else finalQty = totalBase;
-        } else if (isVol) {
-          if (preferredUnit === 'L') finalQty = totalBase / 1000;
-          else if (preferredUnit === 'cL') finalQty = totalBase / 10;
-          else finalQty = totalBase;
-        } else {
-          finalQty = totalBase;
-        }
-
-        finalQty = Math.round(finalQty * 100) / 100;
-        result[ing] = { qty: finalQty, unit: preferredUnit };
-      });
-
-      return result;
-    }
-
-    // --- Variables ---
-    let ingredientToCol = {};
-    let manualIngredients = [];
-    const coursesBody = document.getElementById("coursesBody");
-    const manualSelect = document.getElementById("manualSelect");
-    const manualUnit = document.getElementById("manualUnit");
-
-    // --- Charger ingrédients et unités ---
-    async function loadIngredientsList() {
-      const snap = await getDocs(collection(db,"ingredients"));
-      let ingredients = [];
-      snap.forEach(docSnap => {
-        const data = docSnap.data();
-        ingredientToCol[data.nom] = data.col;
-        ingredients.push(data.nom);
-      });
-
-      // Trier alphabétiquement
-      ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-
-      // Remplir la liste déroulante
-      ingredients.forEach(nom=>{
-        const option = document.createElement("option");
-        option.value = nom;
-        option.textContent = nom;
-        manualSelect.appendChild(option);
-      });
-    }
-
-    async function loadUnitsList() {
-      const snap = await getDocs(collection(db,"Unites"));
-      let unites = [];
-      snap.forEach(docSnap=>{
-        const data = docSnap.data();
-        unites.push(data.nom);
-      });
-
-      unites.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-
-      unites.forEach(nom=>{
-        const option = document.createElement("option");
-        option.value = nom;
-        option.textContent = nom;
-        manualUnit.appendChild(option);
-      });
-    }
-
-    // --- Charger courses existantes (manuelles) ---
-    async function loadCoursesData() {
-      manualIngredients = [];
-      const snap = await getDocs(collection(db,"courses"));
-      snap.forEach(docSnap=>{
-        const data = docSnap.data();
-        if(data.manuel){
-          manualIngredients.push({
-            nom: docSnap.id,
-            qty: data.qty,
-            unit: data.unit,
-            col: data.col,
-            checked: data.checked,
-            manuel: true
+        if(item.manuel){
+          const delBtn = document.createElement("span");
+          delBtn.textContent=" ❌";
+          delBtn.style.color="red";
+          delBtn.style.cursor="pointer";
+          delBtn.addEventListener("click", async ()=>{
+            await deleteDoc(doc(db,"courses",item.nom));
+            manualIngredients = manualIngredients.filter(m=>m.nom!==item.nom);
+            renderCourses();
           });
+          td.appendChild(delBtn);
         }
-      });
-    }
-
-    // --- Ajouter manuel ---
-    document.getElementById("addManualBtn").addEventListener("click", async ()=>{
-      const name = manualSelect.value;
-      const qty = parseFloat(document.getElementById("manualQty").value)||0;
-      const unit = manualUnit.value;
-      if(!name || !unit) return alert("Sélectionnez un ingrédient et une unité");
-      const col = ingredientToCol[name]??0;
-
-      await setDoc(doc(db,"courses",name), {
-        checked:false, qty, unit, col, manuel:true
-      });
-
-      manualIngredients.push({nom:name, qty, unit, col, checked:false, manuel:true});
-      renderCourses();
-    });
-
-    // --- Supprimer tout manuel ---
-    document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
-      if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
-      if(!confirm("Supprimer tous les ingrédients manuels ?")) return;
-      for(const item of manualIngredients){
-        await deleteDoc(doc(db,"courses",item.nom));
       }
-      manualIngredients = [];
-      renderCourses();
-    });
-
-  	// --- Récupérer ingrédients du planning avec les états cochés ---
-	async function loadPlanningIngredients() {
-	  const coursesSnap = await getDocs(collection(db,"courses"));
-	  const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}], checked } }
-	
-	  coursesSnap.forEach(dayDoc => {
-	    const dayData = dayDoc.data();
-	
-	    // Si l'ingrédient est au format qty/unit (planning)
-	    Object.keys(dayData).forEach(ing => {
-	      const val = dayData[ing];
-	      if (val && typeof val === "object" && "qty" in val && "unit" in val) {
-	        if (!ingredientsRaw[ing]) ingredientsRaw[ing] = { qtys: [], checked: false };
-	        ingredientsRaw[ing].qtys.push({ qty: val.qty, unit: val.unit });
-	        if (val.checked) ingredientsRaw[ing].checked = true; // garder état coché
-	      }
-	    });
-	
-	    // Si c’est un document "courses" avec état de case à cocher
-	    if ("checked" in dayData && "qty" in dayData && "unit" in dayData) {
-	      const ing = dayDoc.id;
-	      if (!ingredientsRaw[ing]) ingredientsRaw[ing] = { qtys: [] };
-	      ingredientsRaw[ing].qtys.push({ qty: dayData.qty, unit: dayData.unit });
-	      if (dayData.checked) ingredientsRaw[ing].checked = true;
-	    }
-	  });
-	
-	  const summed = convertAndSumIngredients(ingredientsRaw);
-	
-	  // Fusionner le checked dans les résultats
-	  Object.keys(summed).forEach(ing => {
-	    summed[ing].checked = ingredientsRaw[ing].checked || false;
-	  });
-	
-	  return summed;
-	}
-
-
-    // --- Rendu ---
-    async function renderCourses(){
-      const planningIngredients = await loadPlanningIngredients();
-      const cols = Array.from({length:10},()=>[]);
-
-      Object.keys(planningIngredients).forEach(ing=>{
-        const col = ingredientToCol[ing]??0;
-        cols[col].push({nom:ing, ...planningIngredients[ing]});
-      });
-
-      manualIngredients.forEach(item=>{
-        const col = item.col??0;
-        cols[col].push({...item, checked:item.checked||false});
-      });
-
-      cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
-
-      coursesBody.innerHTML="";
-      const maxRows = Math.max(...cols.map(c=>c.length));
-      for(let i=0;i<maxRows;i++){
-        const tr = document.createElement("tr");
-        for(let j=0;j<10;j++){
-          const td = document.createElement("td");
-          const item = cols[j][i];
-          if(item){
-            const cb = document.createElement("input");
-            cb.type="checkbox";
-            cb.checked = item.checked;
-            cb.addEventListener("change", async ()=>{
-              await setDoc(doc(db,"courses",item.nom), {
-                checked: cb.checked,
-                qty: item.qty||0,
-                unit: item.unit||"",
-                col: item.col||0,
-                manuel: item.manuel||false
-              }, {merge:true});
-              item.checked = cb.checked;
-              td.style.textDecoration = cb.checked ? "line-through" : "none";
-            });
-            td.appendChild(cb);
-            td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
-            if(item.checked) td.style.textDecoration = "line-through";
-
-            if(item.manuel){
-              const delBtn = document.createElement("span");
-              delBtn.textContent=" ❌";
-              delBtn.style.color="red";
-              delBtn.style.cursor="pointer";
-              delBtn.addEventListener("click", async ()=>{
-                await deleteDoc(doc(db,"courses",item.nom));
-                manualIngredients = manualIngredients.filter(m=>m.nom!==item.nom);
-                renderCourses();
-              });
-              td.appendChild(delBtn);
-            }
-          }
-          tr.appendChild(td);
-        }
-        coursesBody.appendChild(tr);
-      }
+      tr.appendChild(td);
     }
+    coursesBody.appendChild(tr);
+  }
+}
 
-    // --- Initialisation ---
-    (async function init(){
-      await loadIngredientsList();
-      await loadUnitsList();
-      await loadCoursesData();
-      renderCourses();
-    })();
-  </script>
+// --- Initialisation ---
+(async function init(){
+  await loadIngredientsList();
+  await loadUnitsList();
+  await loadCoursesData();
+  renderCourses();
+})();
+</script>
 
 </body>
 </html>
-
