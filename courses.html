@@ -285,16 +285,16 @@
             cb.type="checkbox";
             cb.checked = item.checked;
             cb.addEventListener("change", async ()=>{
-              await setDoc(doc(db,"courses",item.nom), {
-                checked: cb.checked,
-                qty: item.qty||0,
-                unit: item.unit||"",
-                col: item.col||0,
-                manuel: item.manuel||false
-              }, {merge:true});
-              item.checked = cb.checked;
-              td.style.textDecoration = cb.checked ? "line-through" : "none";
-            });
+			  // Mettre à jour seulement "checked", "col" et "manuel" si nécessaire
+			  await setDoc(doc(db,"courses",item.nom), {
+			    checked: cb.checked,
+			    col: item.col||0,
+			    manuel: item.manuel||false
+			  }, {merge:true}); // merge:true -> ne supprime rien d'autre (qty, unit restent)
+			
+			  item.checked = cb.checked;
+			  td.style.textDecoration = cb.checked ? "line-through" : "none";
+			});
             td.appendChild(cb);
             td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
             if(item.checked) td.style.textDecoration = "line-through";
@@ -329,3 +329,4 @@
 
 </body>
 </html>
+
