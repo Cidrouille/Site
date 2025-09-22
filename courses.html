@@ -248,18 +248,15 @@
             cb.type="checkbox";
             cb.checked = item.checked;
             cb.addEventListener("change", async ()=>{
+              await setDoc(doc(db,"courses",item.nom), {
+                checked: cb.checked,
+                qty: item.qty||0,
+                unit: item.unit||"",
+                col: item.col||0,
+                manuel: item.manuel||false
+              }, {merge:true});
               item.checked = cb.checked;
               td.style.textDecoration = cb.checked ? "line-through" : "none";
-              // --- mettre à jour Firebase seulement pour les ingrédients manuels ---
-              if(item.manuel){
-                await setDoc(doc(db,"courses",item.nom), {
-                  checked: cb.checked,
-                  qty: item.qty||0,
-                  unit: item.unit||"",
-                  col: item.col||0,
-                  manuel:true
-                }, {merge:true});
-              }
             });
             td.appendChild(cb);
             td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
