@@ -198,16 +198,24 @@
       renderCourses();
     });
     // --- Supprimer tout manuel ---
-    document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
-      if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
-      if(!confirm("Supprimer tous les ingrédients manuels ?")) return;
-      for(const item of manualIngredients){
-        await deleteDoc(doc(db,"courses",item.nom));
+    document.getElementById("clearManualBtn")?.addEventListener("click", async () => {
+    if (!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
+    if (!confirm("Supprimer tous les ingrédients manuels ?")) return;
+  
+    const snap = await getDocs(collection(db, "courses"));
+    const jours = ["lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
+  
+    for (const docSnap of snap.docs) {
+      const id = docSnap.id;
+      if (!jours.includes(id)) { // supprimer uniquement ce qui n'est pas un jour
+        await deleteDoc(doc(db, "courses", id));
       }
-      manualIngredients = [];
-      renderCourses();
-    });
-    // --- Récupérer ingrédients du planning ---
+    }
+  
+    manualIngredients = [];
+    renderCourses();
+  });
+      // --- Récupérer ingrédients du planning ---
     async function loadPlanningIngredients() {
       const coursesSnap = await getDocs(collection(db,"courses"));
       const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}, ...] } }
@@ -227,9 +235,14 @@
     async function renderCourses(){
       const planningIngredients = await loadPlanningIngredients();
       const cols = Array.from({length:10},()=>[]);
-      Object.keys(planningIngredients).forEach(ing=>{
-        const col = ingredientToCol[ing]??0;
-        cols[col].push({nom:ing, ...planningIngredients[ing], checked:false});
+      Object.keys(planningIngredients).forEach(ing => {
+        const col = ingredientToCol[ing] ?? 0;
+      
+        // récupérer l'état checked actuel dans courses
+        const docSnap = snap.docs.find(d => d.id === ing);
+        const checked = docSnap && docSnap.data().checked ? true : false;
+      
+        cols[col].push({ nom: ing, ...planningIngredients[ing], checked });
       });
       manualIngredients.forEach(item=>{
         const col = item.col??0;
@@ -247,14 +260,11 @@
             const cb = document.createElement("input");
             cb.type="checkbox";
             cb.checked = item.checked;
-            cb.addEventListener("change", async ()=>{
-              await setDoc(doc(db,"courses",item.nom), {
-                checked: cb.checked,
-                qty: item.qty||0,
-                unit: item.unit||"",
-                col: item.col||0,
-                manuel: item.manuel||false
-              }, {merge:true});
+            cb.addEventListener("change", async () => {
+              // Mettre à jour uniquement checked, sans écraser qty/unit
+              const docRef = doc(db, "courses", item.nom);
+              await setDoc(docRef, { checked: cb.checked }, { merge: true });
+            
               item.checked = cb.checked;
               td.style.textDecoration = cb.checked ? "line-through" : "none";
             });
@@ -289,3 +299,4 @@
   </script>
 </body>
 </html>
+
