@@ -265,26 +265,27 @@
             cb.type="checkbox";
             cb.checked = item.checked || false;
             cb.addEventListener("change", async ()=>{
-              if(item.fromPlanning){
-                // Mettre à jour le planning
-                const updateDoc = doc(db,"planning",item.jour);
-                await setDoc(updateDoc, {
-                  [item.keyInPlanning]: cb.checked ? item.nom : ""
-                }, {merge:true});
-                item.checked = cb.checked;
-              } else {
-                // Ingrédient manuel
-                const updateDoc = doc(db,"courses",item.nom);
-                await setDoc(updateDoc, {
+              item.checked = cb.checked;
+              td.style.textDecoration = cb.checked ? "line-through" : "none";
+              // --- mettre à jour Firebase seulement pour les ingrédients manuels ---
+              if(item.manuel){
+                await setDoc(doc(db,"courses",item.nom), {
                   checked: cb.checked,
                   qty: item.qty||0,
                   unit: item.unit||"",
                   col: item.col||0,
-                  manuel: item.manuel||false
+                  manuel:true
                 }, {merge:true});
-                item.checked = cb.checked;
               }
-              td.style.textDecoration = cb.checked ? "line-through" : "none";
+              // --- seulement visuel pour les ingrédients du planning ---
+              if(!item.manuel){
+                const saved = JSON.parse(localStorage.getItem('planningChecked') || '{}');
+                if(saved[item.nom]) {
+                  cb.checked = true;
+                  td.style.textDecoration = "line-through";
+                  item.checked = true;
+                }
+              }
             });
             td.appendChild(cb);
             td.appendChild(document.createTextNode(` ${item.nom}${item.qty ? ` (${item.qty} ${item.unit})` : ""}`));
@@ -319,3 +320,4 @@
   </script>
 </body>
 </html>
+
