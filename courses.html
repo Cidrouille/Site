@@ -84,13 +84,11 @@
       const volToMl  = { ml: 1, cl: 10, l: 1000 };
       Object.keys(ingredientsRaw).forEach(ing => {
         const qtys = ingredientsRaw[ing].qtys;
-        // Déterminer type
         const units = qtys.map(q => q.unit.toLowerCase());
         let isMass = units.every(u => massUnits.includes(u));
         let isVol  = units.every(u => volUnits.includes(u));
         let totalBase = 0;
         let preferredUnit = qtys[0].unit;
-        // Déterminer la plus grande unité d'origine
         if (isMass) {
           if (units.includes('kg')) preferredUnit = 'Kg';
           else if (units.includes('g')) preferredUnit = 'g';
@@ -100,7 +98,6 @@
           else if (units.includes('cl')) preferredUnit = 'cL';
           else preferredUnit = 'ml';
         }
-        // Somme en unité de base
         qtys.forEach(q => {
           let qty = parseFloat(q.qty.toString().replace(',', '.')) || 0;
           const unit = q.unit.toLowerCase();
@@ -108,7 +105,6 @@
           else if (isVol) totalBase += qty * volToMl[unit];
           else totalBase += qty;
         });
-        // Conversion finale
         let finalQty;
         if (isMass) {
           if (preferredUnit === 'Kg') finalQty = totalBase / 1e6;
@@ -141,9 +137,7 @@
         ingredientToCol[data.nom] = data.col;
         ingredients.push(data.nom);
       });
-      // Trier alphabétiquement
       ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-      // Remplir la liste déroulante
       ingredients.forEach(nom=>{
         const option = document.createElement("option");
         option.value = nom;
@@ -210,7 +204,7 @@
     // --- Récupérer ingrédients du planning ---
     async function loadPlanningIngredients() {
       const coursesSnap = await getDocs(collection(db,"courses"));
-      const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}, ...] } }
+      const ingredientsRaw = {};
       coursesSnap.forEach(dayDoc => {
         const dayData = dayDoc.data();
         Object.keys(dayData).forEach(ing => {
@@ -229,11 +223,11 @@
       const cols = Array.from({length:10},()=>[]);
       Object.keys(planningIngredients).forEach(ing=>{
         const col = ingredientToCol[ing]??0;
-        cols[col].push({nom:ing, ...planningIngredients[ing], checked:false});
+        cols[col].push({nom:ing, ...planningIngredients[ing], checked:false, manuel:false});
       });
       manualIngredients.forEach(item=>{
         const col = item.col??0;
-        cols[col].push({...item, checked:item.checked||false});
+        cols[col].push({...item, checked:item.checked||false, manuel:true});
       });
       cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
       coursesBody.innerHTML="";
@@ -246,17 +240,28 @@
           if(item){
             const cb = document.createElement("input");
             cb.type="checkbox";
+            // --- restaurer l'état ---
+            if(!item.manuel){
+              const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
+              if(saved[item.nom]) item.checked = true;
+            }
             cb.checked = item.checked;
             cb.addEventListener("change", async ()=>{
-              await setDoc(doc(db,"courses",item.nom), {
-                checked: cb.checked,
-                qty: item.qty||0,
-                unit: item.unit||"",
-                col: item.col||0,
-                manuel: item.manuel||false
-              }, {merge:true});
               item.checked = cb.checked;
               td.style.textDecoration = cb.checked ? "line-through" : "none";
+              if(item.manuel){
+                await setDoc(doc(db,"courses",item.nom), {
+                  checked: cb.checked,
+                  qty: item.qty||0,
+                  unit: item.unit||"",
+                  col: item.col||0,
+                  manuel: true
+                }, {merge:true});
+              } else {
+                const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
+                saved[item.nom] = cb.checked;
+                localStorage.setItem("planningChecked", JSON.stringify(saved));
+              }
             });
             td.appendChild(cb);
             td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
