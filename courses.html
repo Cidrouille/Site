@@ -237,24 +237,43 @@
       renderCourses();
     });
 
-    // --- Récupérer ingrédients du planning ---
-    async function loadPlanningIngredients() {
-      const coursesSnap = await getDocs(collection(db,"courses"));
-      const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}, ...] } }
+  	// --- Récupérer ingrédients du planning avec les états cochés ---
+	async function loadPlanningIngredients() {
+	  const coursesSnap = await getDocs(collection(db,"courses"));
+	  const ingredientsRaw = {}; // { ing: { qtys: [{qty, unit}], checked } }
+	
+	  coursesSnap.forEach(dayDoc => {
+	    const dayData = dayDoc.data();
+	
+	    // Si l'ingrédient est au format qty/unit (planning)
+	    Object.keys(dayData).forEach(ing => {
+	      const val = dayData[ing];
+	      if (val && typeof val === "object" && "qty" in val && "unit" in val) {
+	        if (!ingredientsRaw[ing]) ingredientsRaw[ing] = { qtys: [], checked: false };
+	        ingredientsRaw[ing].qtys.push({ qty: val.qty, unit: val.unit });
+	        if (val.checked) ingredientsRaw[ing].checked = true; // garder état coché
+	      }
+	    });
+	
+	    // Si c’est un document "courses" avec état de case à cocher
+	    if ("checked" in dayData && "qty" in dayData && "unit" in dayData) {
+	      const ing = dayDoc.id;
+	      if (!ingredientsRaw[ing]) ingredientsRaw[ing] = { qtys: [] };
+	      ingredientsRaw[ing].qtys.push({ qty: dayData.qty, unit: dayData.unit });
+	      if (dayData.checked) ingredientsRaw[ing].checked = true;
+	    }
+	  });
+	
+	  const summed = convertAndSumIngredients(ingredientsRaw);
+	
+	  // Fusionner le checked dans les résultats
+	  Object.keys(summed).forEach(ing => {
+	    summed[ing].checked = ingredientsRaw[ing].checked || false;
+	  });
+	
+	  return summed;
+	}
 
-      coursesSnap.forEach(dayDoc => {
-        const dayData = dayDoc.data();
-        Object.keys(dayData).forEach(ing => {
-          const val = dayData[ing];
-          if (val && typeof val === "object" && "qty" in val && "unit" in val) {
-            if (!ingredientsRaw[ing]) ingredientsRaw[ing] = { qtys: [] };
-            ingredientsRaw[ing].qtys.push({ qty: val.qty, unit: val.unit });
-          }
-        });
-      });
-
-      return convertAndSumIngredients(ingredientsRaw);
-    }
 
     // --- Rendu ---
     async function renderCourses(){
@@ -263,7 +282,7 @@
 
       Object.keys(planningIngredients).forEach(ing=>{
         const col = ingredientToCol[ing]??0;
-        cols[col].push({nom:ing, ...planningIngredients[ing], checked:false});
+        cols[col].push({nom:ing, ...planningIngredients[ing]});
       });
 
       manualIngredients.forEach(item=>{
@@ -329,3 +348,4 @@
 
 </body>
 </html>
+
