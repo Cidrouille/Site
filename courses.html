@@ -235,7 +235,7 @@
         cols[col].push({...item, checked:item.checked||false, manuel:true});
       });
     
-      // --- Nettoyage du localStorage ---
+      // --- Nettoyage du localStorage : on supprime les entrées qui ne sont plus dans le planning ---
       let saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
       const allCurrentIngredients = [
         ...Object.keys(planningIngredients),
@@ -263,10 +263,14 @@
             const cb = document.createElement("input");
             cb.type="checkbox";
     
-            // --- restaurer l'état ---
+            // --- restaurer l'état uniquement si l'ingrédient est toujours dans le planning ---
             if(!item.manuel){
               const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
-              if(saved[item.nom]) item.checked = true;
+              if(saved[item.nom] && planningIngredients[item.nom]){
+                item.checked = true;
+              } else {
+                item.checked = false;
+              }
             }
             cb.checked = item.checked;
     
@@ -325,5 +329,6 @@
   </script>
 </body>
 </html>
+
 
 
