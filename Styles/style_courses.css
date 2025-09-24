@@ -97,3 +97,49 @@ tbody tr:hover {
     color: #b33;
     font-style: italic;
 }
+
+/* --- AJOUTS pour la sidebar Recettes --- */
+.side-menu {
+    display: flex;
+    flex-direction: column; /* enfants dans l'ordre HTML */
+    gap: 1rem;
+    padding: 1rem;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+#newRecipeBtn {
+    padding: 0.5rem 1rem;
+    background-color: #007ACC;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#newRecipeBtn:hover {
+    background-color: #005f99;
+}
+
+#recipeList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#recipeList li {
+    margin-bottom: 0.5rem;
+}
+
+#recipeList a {
+    text-decoration: none;
+    color: #007ACC;
+    font-weight: 500;
+}
+
+#recipeList a:hover {
+    text-decoration: underline;
+}
