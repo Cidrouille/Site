@@ -41,8 +41,6 @@ nav a:hover {
 }
 
 /* === Menu latéral === */
-
-/* === Menu latéral === */
 .side-menu {
   position: fixed;
   top: 63px;                    /* commence après la barre de nav */
@@ -99,8 +97,16 @@ nav a:hover {
   background: #007ACC;
   border-radius: 4px;
 }
-.side-menu ul::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.side-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;                              /* prend tout l’espace restant */
+  overflow-y: auto;                          /* rend la liste scrollable */
+  max-height: calc(100vh - 160px);           /* ajuste selon nav + bouton */
+  padding-bottom: 1rem;                      /* espace sous la dernière recette */
+  scrollbar-width: thin;
+  scrollbar-color: #007ACC #f1f1f1;
 }
 
 .side-menu li {
@@ -206,4 +212,5 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
+
 
