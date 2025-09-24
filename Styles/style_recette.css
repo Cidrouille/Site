@@ -78,16 +78,16 @@ nav a:hover {
   background-color: #005f99;
 }
 
-/* Conteneur scrollable autour du UL */
+/* Wrapper scrollable pour la liste */
 .scroll-wrapper {
-  height: calc(300px - 1.5rem); /* soustrait le padding-bottom */
-  overflow-y: auto;         /* scroll vertical */
-  flex-grow: 1;             /* prend l’espace restant */
+  flex-grow: 1;                       /* prend l’espace restant sous le bouton */
+  overflow-y: auto;                   /* scroll vertical */
+  height: calc(100% - 0.5rem);        /* ajuster pour que la scrollbar ne touche pas le bas */
 }
 
-/* Liste de recettes à l’intérieur du wrapper */
+/* UL à l’intérieur du wrapper */
 .scroll-wrapper ul {
-  padding-bottom: 1.5rem;   /* espace en bas pour voir la dernière recette */
+  padding-bottom: 1.5rem;             /* espace en bas pour voir la dernière recette */
   margin: 0;
   list-style: none;
 }
@@ -95,10 +95,12 @@ nav a:hover {
 .scroll-wrapper ul::-webkit-scrollbar {
   width: 6px;
 }
+
 .scroll-wrapper ul::-webkit-scrollbar-thumb {
   background: #007ACC;
   border-radius: 4px;
 }
+
 .scroll-wrapper ul {
   scrollbar-width: thin;
   scrollbar-color: #007ACC #f1f1f1;
@@ -207,4 +209,3 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
-
