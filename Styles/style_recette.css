@@ -82,12 +82,11 @@ nav a:hover {
 .side-menu ul {
   list-style: none;
   margin: 0;
-  padding: 0;              /* on enlève padding ici */
-  flex-grow: 1;            /* prend tout l’espace dispo */
-  overflow-y: auto;        /* rend la liste scrollable */
-  height: calc(100% - 2rem); /* prend la hauteur totale moins padding */
-  box-sizing: border-box;
-  padding-bottom: 1.5rem;  /* espace visible sous la dernière recette */
+  padding: 0 0 0.5rem 0;          /* petit padding en bas */
+  flex-grow: 1;                    /* prend tout l’espace restant */
+  overflow-y: auto;                /* rend la liste scrollable */
+  height: calc(100% - 2.5rem - 2rem); /* 2.5rem pour le titre, 2rem pour le bouton et marges */
+  box-sizing: border-box;          /* prend padding dans le calcul */
   scrollbar-width: thin;
   scrollbar-color: #007ACC #f1f1f1;
 }
@@ -95,6 +94,7 @@ nav a:hover {
 .side-menu ul::-webkit-scrollbar {
   width: 6px;
 }
+
 .side-menu ul::-webkit-scrollbar-thumb {
   background: #007ACC;
   border-radius: 4px;
@@ -203,3 +203,4 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
+
