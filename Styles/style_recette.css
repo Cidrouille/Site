@@ -78,28 +78,31 @@ nav a:hover {
   background-color: #005f99;
 }
 
-/* Liste de recettes défilante */
-.side-menu ul {
-  list-style: none;
-  padding: 0 0 1.5rem 0;       /* padding en bas */
-  margin: 0;
-  overflow-y: auto;
-  flex-grow: 1;
-  max-height: calc(100vh - 63px - 2rem); /* hauteur de la sidebar - nav - marge en bas */
-  box-sizing: content-box;
-  scrollbar-width: thin;
-  scrollbar-color: #007ACC #f1f1f1;
+/* Conteneur scrollable autour du UL */
+.scroll-wrapper {
+  height: 300px;            /* hauteur fixe pour la scrollbar */
+  overflow-y: auto;         /* scroll vertical */
+  flex-grow: 1;             /* prend l’espace restant */
 }
 
-.side-menu ul::-webkit-scrollbar {
+/* Liste de recettes à l’intérieur du wrapper */
+.scroll-wrapper ul {
+  padding-bottom: 1.5rem;   /* espace en bas pour voir la dernière recette */
+  margin: 0;
+  list-style: none;
+}
+
+.scroll-wrapper ul::-webkit-scrollbar {
   width: 6px;
 }
-
-.side-menu ul::-webkit-scrollbar-thumb {
+.scroll-wrapper ul::-webkit-scrollbar-thumb {
   background: #007ACC;
   border-radius: 4px;
 }
-
+.scroll-wrapper ul {
+  scrollbar-width: thin;
+  scrollbar-color: #007ACC #f1f1f1;
+}
 
 .side-menu li {
   margin-bottom: 0.8rem;
@@ -166,11 +169,11 @@ th:nth-child(1), td:nth-child(1) {
 }
 
 th:nth-child(2), td:nth-child(2) {
-  width: 20%;  /* colonne Ingrédient plus large */
+  width: 20%;  /* Quantité plus étroite */
 }
 
 th:nth-child(3), td:nth-child(3) {
-  width: 30%;  /* Quantité et Unité plus étroites */
+  width: 30%;  /* Unité */
 }
 
 thead {
@@ -204,6 +207,3 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
-
-
-
