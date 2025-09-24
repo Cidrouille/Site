@@ -82,11 +82,11 @@ nav a:hover {
 .side-menu ul {
   list-style: none;
   margin: 0;
-  padding: 0 0 0.5rem 0;          /* petit padding en bas */
-  flex-grow: 1;                    /* prend tout l’espace restant */
-  overflow-y: auto;                /* rend la liste scrollable */
-  height: calc(100% - 2.5rem - 2rem); /* 2.5rem pour le titre, 2rem pour le bouton et marges */
-  box-sizing: border-box;          /* prend padding dans le calcul */
+  padding: 0 0 1.5rem 0;        /* garde le padding visuel en bas */
+  flex-grow: 1;                 /* prend tout l’espace disponible */
+  overflow-y: auto;             /* rend la liste scrollable */
+  height: calc(100% - 1.5rem);  /* hauteur = total - padding_bottom */
+  box-sizing: content-box;      /* padding ne compte pas dans la hauteur */
   scrollbar-width: thin;
   scrollbar-color: #007ACC #f1f1f1;
 }
@@ -203,4 +203,5 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
+
 
