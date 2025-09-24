@@ -80,7 +80,7 @@ nav a:hover {
 
 /* Conteneur scrollable autour du UL */
 .scroll-wrapper {
-  height: 300px;            /* hauteur fixe pour la scrollbar */
+  height: calc(300px - 1.5rem); /* soustrait le padding-bottom */
   overflow-y: auto;         /* scroll vertical */
   flex-grow: 1;             /* prend l’espace restant */
 }
@@ -207,3 +207,4 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
+
