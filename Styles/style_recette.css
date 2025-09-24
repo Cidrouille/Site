@@ -79,13 +79,15 @@ nav a:hover {
 }
 
 /* Liste de recettes défilante */
+/* Liste de recettes défilante */
 .side-menu ul {
   list-style: none;
-  padding: 0;
+  padding: 0 0 1.5rem 0;   /* espace en bas pour voir la dernière recette */
   margin: 0;
-  flex-grow: 1;                              /* prend tout l’espace restant */
-  overflow-y: auto;                          /* rend la liste scrollable */
-  max-height: calc(100vh - 160px);           /* ajuste selon nav + bouton */
+  flex-grow: 1;            /* prend tout l’espace dispo */
+  overflow-y: auto;        /* rend la liste scrollable */
+  height: 100%;            /* occupe toute la hauteur dispo */
+  box-sizing: border-box;  /* prend padding dans le calcul */
   scrollbar-width: thin;
   scrollbar-color: #007ACC #f1f1f1;
 }
@@ -96,17 +98,6 @@ nav a:hover {
 .side-menu ul::-webkit-scrollbar-thumb {
   background: #007ACC;
   border-radius: 4px;
-}
-.side-menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex-grow: 1;                              /* prend tout l’espace restant */
-  overflow-y: auto;                          /* rend la liste scrollable */
-  max-height: calc(100vh - 160px);           /* ajuste selon nav + bouton */
-  padding-bottom: 1rem;                      /* espace sous la dernière recette */
-  scrollbar-width: thin;
-  scrollbar-color: #007ACC #f1f1f1;
 }
 
 .side-menu li {
@@ -212,5 +203,6 @@ select {
   width: 100%;
   box-sizing: border-box;
 }
+
 
 
