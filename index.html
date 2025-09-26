@@ -106,6 +106,7 @@
       try {
         const result = await signInWithPopup(auth, provider);
         currentUser = result.user;
+        document.getElementById('signInBtn').style.display = 'none';
         console.log("Connecté :", currentUser.email);
         await loadFromFirestore();
       } catch (err) {
@@ -115,12 +116,15 @@
     });
 
     onAuthStateChanged(auth, user => {
+      const btn = document.getElementById('signInBtn');
       if (user) {
         currentUser = user;
+        btn.style.display = 'none';
         console.log("Utilisateur connecté :", user.email);
         loadFromFirestore();
       } else {
         currentUser = null;
+        btn.style.display = 'inline-block';
         console.log("Utilisateur non connecté");
       }
     });
@@ -228,9 +232,6 @@
         alert("Tous les ingrédients ont été effacés.");
       }
     });
-
-    // Charge les ingrédients uniquement si un utilisateur est connecté
-    // await loadFromFirestore(); // déjà géré par onAuthStateChanged
 
   </script>
 
