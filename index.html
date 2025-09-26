@@ -3,7 +3,7 @@
 <head>
   <!-- ===== MÉTADONNÉES & STYLE ===== -->
   <meta charset="UTF-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Menu et Liste de Courses</title>
   <link rel="stylesheet" href="/Site/Styles/style_index.css" />
@@ -29,6 +29,12 @@
       <p class="centered-warning">
         ⚠️ Connexion Internet requise pour sauvegarder toutes modifications ! ⚠️
       </p>
+
+      <!-- ===== BOUTON DE CONNEXION ===== -->
+      <div style="text-align: center; margin-bottom: 1em;">
+        <button id="signInBtn">Se connecter avec Google</button>
+      </div>
+
       <div style="text-align: center; margin-bottom: 1em;">
         <button id="clearAllBtn">Effacer tous les ingrédients</button>
       </div>
@@ -70,6 +76,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
@@ -82,6 +89,9 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    let currentUser = null;
 
     const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     const ingredientsData = Array.from({ length: 10 }, () => []);
@@ -89,6 +99,35 @@
     const inputCells = document.querySelectorAll('#inputRow input');
     const tbody = document.getElementById('ingredientsBody');
 
+    // ========================
+    // AUTHENTIFICATION
+    // ========================
+    document.getElementById('signInBtn').addEventListener('click', async () => {
+      try {
+        const result = await signInWithPopup(auth, provider);
+        currentUser = result.user;
+        console.log("Connecté :", currentUser.email);
+        await loadFromFirestore();
+      } catch (err) {
+        console.error("Erreur connexion :", err);
+        alert("Connexion échouée : " + err.message);
+      }
+    });
+
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        currentUser = user;
+        console.log("Utilisateur connecté :", user.email);
+        loadFromFirestore();
+      } else {
+        currentUser = null;
+        console.log("Utilisateur non connecté");
+      }
+    });
+
+    // ========================
+    // AFFICHAGE TABLEAU
+    // ========================
     function updateIngredientTable() {
       tbody.innerHTML = '';
       const max = Math.max(...ingredientsData.map(col => col.length));
@@ -112,13 +151,18 @@
       }
     }
 
+    // ========================
+    // FIRESTORE
+    // ========================
     async function addToFirestore(colIndex, value) {
-      const docRef = await addDoc(collection(db, "ingredients"), { col: colIndex, nom: value });
+      if (!currentUser) return alert("Vous devez être connecté !");
+      const docRef = await addDoc(collection(db, "users", currentUser.uid, "ingredients"), { col: colIndex, nom: value });
       ingredientsIds[colIndex].push(docRef.id);
     }
 
     async function loadFromFirestore() {
-      const snapshot = await getDocs(collection(db, "ingredients"));
+      if (!currentUser) return;
+      const snapshot = await getDocs(collection(db, "users", currentUser.uid, "ingredients"));
       const cols = Array.from({ length: 10 }, () => []);
       const ids = Array.from({ length: 10 }, () => []);
       snapshot.forEach(docSnap => {
@@ -138,10 +182,11 @@
     }
 
     async function deleteIngredient(colIndex, itemIndex) {
+      if (!currentUser) return alert("Vous devez être connecté !");
       const docId = ingredientsIds[colIndex][itemIndex];
       if (!docId) return;
       try {
-        await deleteDoc(doc(db, "ingredients", docId));
+        await deleteDoc(doc(db, "users", currentUser.uid, "ingredients", docId));
         ingredientsData[colIndex].splice(itemIndex, 1);
         ingredientsIds[colIndex].splice(itemIndex, 1);
         updateIngredientTable();
@@ -165,8 +210,9 @@
     });
 
     async function clearAllIngredients() {
-      const snapshot = await getDocs(collection(db, "ingredients"));
-      const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "ingredients", docSnap.id)));
+      if (!currentUser) return alert("Vous devez être connecté !");
+      const snapshot = await getDocs(collection(db, "users", currentUser.uid, "ingredients"));
+      const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "users", currentUser.uid, "ingredients", docSnap.id)));
       await Promise.all(batchDeletes);
       for (let i = 0; i < ingredientsData.length; i++) {
         ingredientsData[i] = [];
@@ -176,13 +222,16 @@
     }
 
     document.getElementById('clearAllBtn').addEventListener('click', async () => {
+      if (!currentUser) return alert("Vous devez être connecté !");
       if (confirm("Êtes-vous sûr de vouloir effacer tous les ingrédients ?")) {
         await clearAllIngredients();
         alert("Tous les ingrédients ont été effacés.");
       }
     });
 
-    await loadFromFirestore();
+    // Charge les ingrédients uniquement si un utilisateur est connecté
+    // await loadFromFirestore(); // déjà géré par onAuthStateChanged
+
   </script>
 
   <!-- ===== SCRIPT POUR NAVIGATION ENTRE SECTIONS ===== -->
@@ -199,6 +248,3 @@
   </script>
 </body>
 </html>
-
-
-
