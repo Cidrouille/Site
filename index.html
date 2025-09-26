@@ -1,251 +1,210 @@
-<!DOCTYPE html>
 <html lang="fr">
 <head>
-  <!-- ===== MÉTADONNÉES & STYLE ===== -->
-  <meta charset="UTF-8" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Menu et Liste de Courses</title>
-  <link rel="stylesheet" href="/Site/Styles/style_index.css" />
-  <script type="module" src="/Site/scripts/main.js"></script>
+    <!-- ===== MÉTADONNÉES & STYLE ===== -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Menu et Liste de Courses</title>
+    <link rel="stylesheet" href="/Site/Styles/style_index.css" />
+    <script type="module" src="/Site/scripts/main.js"></script>
 </head>
+
 <body>
+    <!-- ===== BARRE DE NAVIGATION ===== -->
+    <nav>
+        <a href="index.html">Ingrédients</a>
+        <a href="recette.html">Recettes</a>
+        <a href="planning.html">Planning Semaine</a>
+        <a href="courses.html">Liste de Courses</a>
+        <a href="setup.html">Paramètres</a>
+    </nav>
 
-  <!-- ===== BARRE DE NAVIGATION ===== -->
-  <nav>
-    <a href="index.html">Ingrédients</a>
-    <a href="recette.html">Recettes</a>
-    <a href="planning.html">Planning Semaine</a>
-    <a href="courses.html">Liste de Courses</a>
-    <a href="setup.html">Paramètres</a>
-  </nav>
+    <!-- ===== CONTENEUR PRINCIPAL ===== -->
+    <div class="container">
 
-  <!-- ===== CONTENEUR PRINCIPAL ===== -->
-  <div class="container">
+        <!-- ===== SECTION : Ingrédients ===== -->
+        <section id="ingredients">
+            <h2>Ingrédients</h2>
+            <p class="centered-warning">
+                ⚠️ Connexion Internet requise pour sauvegarder toutes modifications ! ⚠️
+            </p>
 
-    <!-- ===== SECTION : Ingrédients ===== -->
-    <section id="ingredients">
-      <h2>Ingrédients</h2>
-      <p class="centered-warning">
-        ⚠️ Connexion Internet requise pour sauvegarder toutes modifications ! ⚠️
-      </p>
+            <div style="text-align: center; margin-bottom: 1em;">
+                <button id="clearAllBtn">Effacer tous les ingrédients</button>
+            </div>
 
-      <!-- ===== BOUTON DE CONNEXION ===== -->
-      <div style="text-align: center; margin-bottom: 1em;">
-        <button id="signInBtn">Se connecter avec Google</button>
-      </div>
+            <!-- ===== TABLEAU DES INGRÉDIENTS ===== -->
+            <table class="excel-table dotted-borders" id="ingredientsTable">
+                <thead>
+                    <tr>
+                        <th>🍎 Fruits &amp; Légumes</th>
+                        <th>🍗 Viandes &amp; Poissons</th>
+                        <th>🧀 Produits Laitiers</th>
+                        <th>🥐 Boulangerie &amp; Céréales</th>
+                        <th>🥫 Épicerie salée</th>
+                        <th>🍫 Épicerie sucrée</th>
+                        <th>❄️ Surgelé</th>
+                        <th>🍹 Boissons</th>
+                        <th>🧴 Produits ménagers</th>
+                        <th>🧼 Hygiène &amp; Beauté</th>
+                    </tr>
+                    <tr id="inputRow">
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                        <th><input type="text" placeholder="Ajouter..." /></th>
+                    </tr>
+                </thead>
+                <tbody id="ingredientsBody"></tbody>
+            </table>
+        </section>
+    </div>
 
-      <div style="text-align: center; margin-bottom: 1em;">
-        <button id="clearAllBtn">Effacer tous les ingrédients</button>
-      </div>
+    <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des ingrédients) ===== -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-      <!-- ===== TABLEAU DES INGRÉDIENTS ===== -->
-      <table class="excel-table dotted-borders" id="ingredientsTable">
-        <thead>
-          <tr>
-            <th>🍎 Fruits &amp; Légumes</th>
-            <th>🍗 Viandes &amp; Poissons</th>
-            <th>🧀 Produits Laitiers</th>
-            <th>🥐 Boulangerie &amp; Céréales</th>
-            <th>🥫 Épicerie salée</th>
-            <th>🍫 Épicerie sucrée</th>
-            <th>❄️ Surgelé</th>
-            <th>🍹 Boissons</th>
-            <th>🧴 Produits ménagers</th>
-            <th>🧼 Hygiène &amp; Beauté</th>
-          </tr>
-          <tr id="inputRow">
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-            <th><input type="text" placeholder="Ajouter..." /></th>
-          </tr>
-        </thead>
-        <tbody id="ingredientsBody"></tbody>
-      </table>
-    </section>
-  </div>
+        // ===== CONFIGURATION FIREBASE =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
+            authDomain: "liste-de-courses-8a78d.firebaseapp.com",
+            projectId: "liste-de-courses-8a78d",
+            storageBucket: "liste-de-courses-8a78d.appspot.com",
+            messagingSenderId: "90294670968",
+            appId: "1:90294670968:web:901f321930a3a6342dbf8d"
+        };
 
-  <!-- ===== SCRIPT PRINCIPAL (Firebase + gestion des ingrédients) ===== -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
-      authDomain: "liste-de-courses-8a78d.firebaseapp.com",
-      projectId: "liste-de-courses-8a78d",
-      storageBucket: "liste-de-courses-8a78d.appspot.com",
-      messagingSenderId: "90294670968",
-      appId: "1:90294670968:web:901f321930a3a6342dbf8d"
-    };
+        // ===== UTILS =====
+        const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        const ingredientsData = Array.from({ length: 10 }, () => []);
+        const ingredientsIds = Array.from({ length: 10 }, () => []);
+        const inputCells = document.querySelectorAll('#inputRow input');
+        const tbody = document.getElementById('ingredientsBody');
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-    let currentUser = null;
+        // ===== MISE À JOUR DU TABLEAU =====
+        function updateIngredientTable() {
+            tbody.innerHTML = '';
+            const max = Math.max(...ingredientsData.map(col => col.length));
+            for (let i = 0; i < max; i++) {
+                const tr = document.createElement('tr');
+                for (let j = 0; j < 10; j++) {
+                    const td = document.createElement('td');
+                    const item = ingredientsData[j][i];
+                    if (item) {
+                        td.textContent = item;
+                        const btn = document.createElement('button');
+                        btn.textContent = '×';
+                        btn.className = 'delete-btn';
+                        btn.title = 'Supprimer cet ingrédient';
+                        btn.addEventListener('click', () => deleteIngredient(j, i));
+                        td.appendChild(btn);
+                    }
+                    tr.appendChild(td);
+                }
+                tbody.appendChild(tr);
+            }
+        }
 
-    const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-    const ingredientsData = Array.from({ length: 10 }, () => []);
-    const ingredientsIds = Array.from({ length: 10 }, () => []);
-    const inputCells = document.querySelectorAll('#inputRow input');
-    const tbody = document.getElementById('ingredientsBody');
+        // ===== FIRESTORE =====
+        async function addToFirestore(colIndex, value) {
+            const docRef = await addDoc(collection(db, "ingredients"), { col: colIndex, nom: value });
+            ingredientsIds[colIndex].push(docRef.id);
+        }
 
-    // ========================
-    // AUTHENTIFICATION
-    // ========================
-    document.getElementById('signInBtn').addEventListener('click', async () => {
-      try {
-        const result = await signInWithPopup(auth, provider);
-        currentUser = result.user;
-        document.getElementById('signInBtn').style.display = 'none';
-        console.log("Connecté :", currentUser.email);
+        async function loadFromFirestore() {
+            const snapshot = await getDocs(collection(db, "ingredients"));
+            const cols = Array.from({ length: 10 }, () => []);
+            const ids = Array.from({ length: 10 }, () => []);
+            
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                if (typeof data.col === 'number' && typeof data.nom === 'string') {
+                    cols[data.col]?.push(data.nom);
+                    ids[data.col]?.push(docSnap.id);
+                }
+            });
+
+            cols.forEach((col, idx) => {
+                const paired = col.map((val, i) => ({ val, id: ids[idx][i] }));
+                paired.sort((a, b) => normalize(a.val).localeCompare(normalize(b.val)));
+                ingredientsData[idx] = paired.map(p => p.val);
+                ingredientsIds[idx] = paired.map(p => p.id);
+            });
+
+            updateIngredientTable();
+        }
+
+        async function deleteIngredient(colIndex, itemIndex) {
+            const docId = ingredientsIds[colIndex][itemIndex];
+            if (!docId) return;
+
+            try {
+                await deleteDoc(doc(db, "ingredients", docId));
+                ingredientsData[colIndex].splice(itemIndex, 1);
+                ingredientsIds[colIndex].splice(itemIndex, 1);
+                updateIngredientTable();
+            } catch (err) {
+                alert("Erreur lors de la suppression : " + err.message);
+            }
+        }
+
+        inputCells.forEach((input, colIndex) => {
+            input.addEventListener('change', async () => {
+                const value = input.value.trim();
+                input.value = '';
+                if (!value) return;
+
+                const normalizedValue = normalize(value);
+                if (ingredientsData[colIndex].some(item => normalize(item) === normalizedValue)) return;
+
+                ingredientsData[colIndex].push(value);
+                ingredientsData[colIndex].sort((a, b) => normalize(a).localeCompare(normalize(b)));
+                updateIngredientTable();
+                await addToFirestore(colIndex, value);
+            });
+        });
+
+        async function clearAllIngredients() {
+            const snapshot = await getDocs(collection(db, "ingredients"));
+            const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "ingredients", docSnap.id)));
+            await Promise.all(batchDeletes);
+
+            for (let i = 0; i < ingredientsData.length; i++) {
+                ingredientsData[i] = [];
+                ingredientsIds[i] = [];
+            }
+            updateIngredientTable();
+        }
+
+        document.getElementById('clearAllBtn').addEventListener('click', async () => {
+            if (confirm("Êtes-vous sûr de vouloir effacer tous les ingrédients ?")) {
+                await clearAllIngredients();
+                alert("Tous les ingrédients ont été effacés.");
+            }
+        });
+
         await loadFromFirestore();
-      } catch (err) {
-        console.error("Erreur connexion :", err);
-        alert("Connexion échouée : " + err.message);
-      }
-    });
+    </script>
 
-    onAuthStateChanged(auth, user => {
-      const btn = document.getElementById('signInBtn');
-      if (user) {
-        currentUser = user;
-        btn.style.display = 'none';
-        console.log("Utilisateur connecté :", user.email);
-        loadFromFirestore();
-      } else {
-        currentUser = null;
-        btn.style.display = 'inline-block';
-        console.log("Utilisateur non connecté");
-      }
-    });
-
-    // ========================
-    // AFFICHAGE TABLEAU
-    // ========================
-    function updateIngredientTable() {
-      tbody.innerHTML = '';
-      const max = Math.max(...ingredientsData.map(col => col.length));
-      for (let i = 0; i < max; i++) {
-        const tr = document.createElement('tr');
-        for (let j = 0; j < 10; j++) {
-          const td = document.createElement('td');
-          const item = ingredientsData[j][i];
-          if (item) {
-            td.textContent = item;
-            const btn = document.createElement('button');
-            btn.textContent = '×';
-            btn.className = 'delete-btn';
-            btn.title = 'Supprimer cet ingrédient';
-            btn.addEventListener('click', () => deleteIngredient(j, i));
-            td.appendChild(btn);
-          }
-          tr.appendChild(td);
+    <!-- ===== SCRIPT POUR NAVIGATION ENTRE SECTIONS ===== -->
+    <script>
+        function showSection(id) {
+            ['ingredients', 'recettes', 'planning', 'courses', 'setup'].forEach(sec => {
+                const el = document.getElementById(sec);
+                if (el) el.classList.toggle('hidden', sec !== id);
+            });
         }
-        tbody.appendChild(tr);
-      }
-    }
-
-    // ========================
-    // FIRESTORE
-    // ========================
-    async function addToFirestore(colIndex, value) {
-      if (!currentUser) return alert("Vous devez être connecté !");
-      const docRef = await addDoc(collection(db, "users", currentUser.uid, "ingredients"), { col: colIndex, nom: value });
-      ingredientsIds[colIndex].push(docRef.id);
-    }
-
-    async function loadFromFirestore() {
-      if (!currentUser) return;
-      const snapshot = await getDocs(collection(db, "users", currentUser.uid, "ingredients"));
-      const cols = Array.from({ length: 10 }, () => []);
-      const ids = Array.from({ length: 10 }, () => []);
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        if (typeof data.col === 'number' && typeof data.nom === 'string') {
-          cols[data.col]?.push(data.nom);
-          ids[data.col]?.push(docSnap.id);
-        }
-      });
-      cols.forEach((col, idx) => {
-        const paired = col.map((val, i) => ({ val, id: ids[idx][i] }));
-        paired.sort((a, b) => normalize(a.val).localeCompare(normalize(b.val)));
-        ingredientsData[idx] = paired.map(p => p.val);
-        ingredientsIds[idx] = paired.map(p => p.id);
-      });
-      updateIngredientTable();
-    }
-
-    async function deleteIngredient(colIndex, itemIndex) {
-      if (!currentUser) return alert("Vous devez être connecté !");
-      const docId = ingredientsIds[colIndex][itemIndex];
-      if (!docId) return;
-      try {
-        await deleteDoc(doc(db, "users", currentUser.uid, "ingredients", docId));
-        ingredientsData[colIndex].splice(itemIndex, 1);
-        ingredientsIds[colIndex].splice(itemIndex, 1);
-        updateIngredientTable();
-      } catch (err) {
-        alert("Erreur lors de la suppression : " + err.message);
-      }
-    }
-
-    inputCells.forEach((input, colIndex) => {
-      input.addEventListener('change', async () => {
-        const value = input.value.trim();
-        input.value = '';
-        if (!value) return;
-        const normalizedValue = normalize(value);
-        if (ingredientsData[colIndex].some(item => normalize(item) === normalizedValue)) return;
-        ingredientsData[colIndex].push(value);
-        ingredientsData[colIndex].sort((a, b) => normalize(a).localeCompare(normalize(b)));
-        updateIngredientTable();
-        await addToFirestore(colIndex, value);
-      });
-    });
-
-    async function clearAllIngredients() {
-      if (!currentUser) return alert("Vous devez être connecté !");
-      const snapshot = await getDocs(collection(db, "users", currentUser.uid, "ingredients"));
-      const batchDeletes = snapshot.docs.map(docSnap => deleteDoc(doc(db, "users", currentUser.uid, "ingredients", docSnap.id)));
-      await Promise.all(batchDeletes);
-      for (let i = 0; i < ingredientsData.length; i++) {
-        ingredientsData[i] = [];
-        ingredientsIds[i] = [];
-      }
-      updateIngredientTable();
-    }
-
-    document.getElementById('clearAllBtn').addEventListener('click', async () => {
-      if (!currentUser) return alert("Vous devez être connecté !");
-      if (confirm("Êtes-vous sûr de vouloir effacer tous les ingrédients ?")) {
-        await clearAllIngredients();
-        alert("Tous les ingrédients ont été effacés.");
-      }
-    });
-
-  </script>
-
-  <!-- ===== SCRIPT POUR NAVIGATION ENTRE SECTIONS ===== -->
-  <script>
-    function showSection(id) {
-      ['ingredients', 'recettes', 'planning', 'courses', 'setup'].forEach(sec => {
-        const el = document.getElementById(sec);
-        if (el) {
-          el.classList.toggle('hidden', sec !== id);
-        }
-      });
-    }
-    showSection('ingredients');
-  </script>
+        showSection('ingredients');
+    </script>
 </body>
 </html>
