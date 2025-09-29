@@ -47,8 +47,10 @@
                         <th>🍹 Boissons</th>
                         <th>🧴 Produits ménagers</th>
                         <th>🧼 Hygiène &amp; Beauté</th>
+                        <th>🛠️ Bricolage</th>
                     </tr>
                     <tr id="inputRow">
+                        <th><input type="text" placeholder="Ajouter..." /></th>
                         <th><input type="text" placeholder="Ajouter..." /></th>
                         <th><input type="text" placeholder="Ajouter..." /></th>
                         <th><input type="text" placeholder="Ajouter..." /></th>
@@ -86,8 +88,8 @@
 
         // ===== UTILS =====
         const normalize = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-        const ingredientsData = Array.from({ length: 10 }, () => []);
-        const ingredientsIds = Array.from({ length: 10 }, () => []);
+        const ingredientsData = Array.from({ length: 11 }, () => []); // 11 colonnes maintenant
+        const ingredientsIds = Array.from({ length: 11 }, () => []);
         const inputCells = document.querySelectorAll('#inputRow input');
         const tbody = document.getElementById('ingredientsBody');
 
@@ -97,7 +99,7 @@
             const max = Math.max(...ingredientsData.map(col => col.length));
             for (let i = 0; i < max; i++) {
                 const tr = document.createElement('tr');
-                for (let j = 0; j < 10; j++) {
+                for (let j = 0; j < 11; j++) { // 11 colonnes
                     const td = document.createElement('td');
                     const item = ingredientsData[j][i];
                     if (item) {
@@ -123,8 +125,8 @@
 
         async function loadFromFirestore() {
             const snapshot = await getDocs(collection(db, "ingredients"));
-            const cols = Array.from({ length: 10 }, () => []);
-            const ids = Array.from({ length: 10 }, () => []);
+            const cols = Array.from({ length: 11 }, () => []);
+            const ids = Array.from({ length: 11 }, () => []);
             
             snapshot.forEach(docSnap => {
                 const data = docSnap.data();
