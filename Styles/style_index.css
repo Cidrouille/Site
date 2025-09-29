@@ -29,8 +29,7 @@ nav a {
     transition: background-color 0.3s ease;
 }
 
-nav a:hover,
-nav a:focus {
+nav a:hover, nav a:focus {
     background-color: #005f99;
     outline: none;
 }
@@ -39,7 +38,6 @@ nav a:focus {
     padding: 2rem 3rem;
     max-width: 1200px;
     margin: auto;
-    overflow-x: auto; /* Scroll horizontal si nécessaire */
 }
 
 h2 {
@@ -71,8 +69,6 @@ thead th {
     padding: 0.75rem 1rem;
     text-align: center;
     font-weight: 700;
-    word-wrap: break-word;
-    white-space: normal;
 }
 
 tbody td {
@@ -90,25 +86,22 @@ tbody tr:hover {
 }
 
 p .centered-reminder {
-    text-align: center;
-    font-weight: bold;
-    margin: 1em 0;
-    color: #b33;
-    font-style: italic;
+  text-align: center;
+  font-weight: bold;
+  margin: 1em 0;
+  color: #b33;
+  font-style: italic;
 }
 
 /* Styles spécifiques pour tableau "Excel-like" */
-.excel-table {
-    table-layout: fixed; /* répartit la largeur uniformément */
-    width: 100%; /* prend toute la largeur du conteneur */
-}
-
 .excel-table thead th {
     background-color: #004a99;
     font-weight: 700;
-    word-wrap: break-word;
-    white-space: normal;
-    padding: 0.4rem 0.6rem;
+}
+
+.excel-table {
+    table-layout: fixed; /* répartit la largeur uniformément */
+    width: 100%;         /* prend toute la largeur du conteneur */
 }
 
 .excel-table tbody tr:nth-child(even) {
@@ -122,13 +115,11 @@ p .centered-reminder {
 }
 
 .excel-table tbody td {
-    min-width: 0; /* supprimer la largeur minimale fixe */
+    min-width: 0;          /* supprimer la largeur minimale fixe */
     font-family: monospace;
     word-wrap: break-word; /* autoriser le retour à la ligne */
-    white-space: normal; /* autoriser le retour à la ligne */
+    white-space: normal;   /* autoriser le retour à la ligne */
     padding: 0.4rem 0.6rem; /* réduire un peu le padding */
-    position: relative; /* pour bouton suppression */
-    padding-right: 1.5em; /* espace pour bouton suppression */
 }
 
 .dotted-borders th,
@@ -136,50 +127,65 @@ p .centered-reminder {
     border: 1px dotted #bbb;
 }
 
-/* Input row */
+.excel-table thead th {
+    word-wrap: break-word;
+    white-space: normal;
+    padding: 0.4rem 0.6rem;
+}
+
 #inputRow input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0.3rem;
-    font-size: 1rem;
-    border-radius: 8px; /* arrondit les coins */
-    border: 1px solid #ccc; /* bordure douce */
-    transition: border-color 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.3rem;
+  font-size: 1rem;
+  border-radius: 8px; /* arrondit les coins */
+  border: 1px solid #ccc; /* une bordure douce pour mieux voir */
+  transition: border-color 0.3s ease;
 }
 
 #inputRow input:focus {
-    border-color: #007ACC; /* bordure bleue au focus */
-    outline: none;
+  border-color: #007ACC; /* bordure bleue au focus */
+  outline: none;
 }
 
 #inputRow th {
-    background-color: #007ACC;
+    background-color: #007ACC; /* ou aucune couleur */
+}
+
+/* Scroll horizontal si nécessaire */
+.container {
+    overflow-x: auto;
 }
 
 /* === Message d’avertissement === */
 .centered-warning {
-    text-align: center;
-    font-weight: bold;
-    margin: 1em 0;
-    color: #b33;
-    font-style: italic;
+  text-align: center;
+  font-weight: bold;
+  margin: 1em 0;
+  color: #b33;
+  font-style: italic;
 }
 
 /* === Table ingrédients avec bouton suppression === */
+table.excel-table td {
+  position: relative;
+  padding-right: 1.5em;
+}
+
 .delete-btn {
-    position: absolute;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: red;
-    font-weight: bold;
-    background: transparent;
-    border: none;
-    font-size: 1em;
-    line-height: 1;
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: red;
+  font-weight: bold;
+  background: transparent;
+  border: none;
+  font-size: 1em;
+  line-height: 1;
 }
 
 .delete-btn:hover {
-    color: darkred;
+  color: darkred;
 }
