@@ -8,8 +8,9 @@
       "type": "image/png"
     }
   ],
-  "start_url": "recette.html",
+  "start_url": "https://cidrouille.github.io/Site/courses.html",
   "display": "standalone"
 }
+
 
 
