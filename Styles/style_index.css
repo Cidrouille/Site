@@ -1,5 +1,5 @@
-/* styles.css */
-
+/* === Base (PC) === */
+/* ton CSS actuel, inchangé */
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #f9fafb;
@@ -18,6 +18,7 @@ nav {
     position: sticky;
     top: 0;
     z-index: 10;
+    flex-wrap: wrap; /* permet au menu de passer à la ligne si besoin */
 }
 
 nav a {
@@ -38,158 +39,92 @@ nav a:hover, nav a:focus {
     padding: 2rem 3rem;
     max-width: 1200px;
     margin: auto;
+    overflow-x: auto; /* permet le scroll horizontal si le tableau déborde */
 }
 
-h2 {
-    color: #004a99;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #007ACC;
-    padding-bottom: 0.3rem;
+/* … tout ton CSS actuel, inchangé … */
+
+/* === Responsive === */
+
+/* Tablette (max 1024px) */
+@media (max-width: 1024px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  nav {
+    justify-content: center;
+    gap: 1rem;
+  }
+
+  nav a {
+    font-size: 0.95rem;
+  }
+
+  table {
+    font-size: 0.9rem;
+  }
 }
 
-table {
+/* Téléphone (max 768px) */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column; /* menu vertical */
+    align-items: center;
+    padding: 0.8rem;
+  }
+
+  nav a {
+    display: block;
     width: 100%;
-    border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-thead {
-    background-color: #007ACC;
-    color: white;
-}
-
-th {
-    font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-
-thead th {
-    padding: 0.75rem 1rem;
     text-align: center;
-    font-weight: 700;
-}
+    padding: 0.6rem;
+  }
 
-tbody td {
-    padding: 0.6rem 1rem;
-    border-bottom: 1px solid #ddd;
+  .container {
+    padding: 1rem;
+  }
+
+  h2 {
+    font-size: 1.3rem;
     text-align: center;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+
+  thead th {
+    font-size: 0.8rem;
+    padding: 0.5rem;
+  }
+
+  tbody td {
+    padding: 0.4rem;
+  }
+
+  #inputRow input {
+    font-size: 0.85rem;
+    padding: 0.25rem;
+  }
 }
 
-tbody tr:hover {
-    background-color: #f0f8ff;
-}
+/* Très petits écrans (max 480px) */
+@media (max-width: 480px) {
+  nav a {
+    font-size: 0.85rem;
+    padding: 0.5rem;
+  }
 
-.hidden {
-    display: none;
-}
+  h2 {
+    font-size: 1.1rem;
+  }
 
-p .centered-reminder {
-  text-align: center;
-  font-weight: bold;
-  margin: 1em 0;
-  color: #b33;
-  font-style: italic;
-}
+  table {
+    font-size: 0.75rem;
+  }
 
-
-
-/* Styles sp?fiques pour tableau "Excel-like" */
-.excel-table thead th {
-    background-color: #004a99;
-    font-weight: 700;
-}
-
-.excel-table {
-    table-layout: fixed; /* répartit la largeur uniformément */
-    width: 100%;         /* prend toute la largeur du conteneur */
-}
-
-.excel-table tbody tr:nth-child(even) {
-    background-color: #f7f9fc;
-}
-
-/* Hauteur augmentée à partir de la 4ème ligne du tbody */
-.excel-table tbody tr:nth-child(n+1) td {
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-}
-
-.excel-table tbody td {
-    min-width: 0;          /* supprimer la largeur minimale fixe */
-    font-family: monospace;
-    word-wrap: break-word; /* autoriser le retour à la ligne */
-    white-space: normal;   /* autoriser le retour à la ligne */
-    padding: 0.4rem 0.6rem; /* réduire un peu le padding */
-}
-
-.dotted-borders th,
-.dotted-borders td {
-    border: 1px dotted #bbb;
-}
-
-.excel-table thead th {
-    word-wrap: break-word;
-    white-space: normal;
-    padding: 0.4rem 0.6rem;
-}
-
-#inputRow input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.3rem;
-  font-size: 1rem;
-  border-radius: 8px; /* arrondit les coins */
-  border: 1px solid #ccc; /* une bordure douce pour mieux voir */
-  transition: border-color 0.3s ease;
-}
-
-#inputRow input:focus {
-  border-color: #007ACC; /* bordure bleue au focus */
-  outline: none;
-}
-
-#inputRow th {
-    background-color: #007ACC; /* ou aucune couleur */
-}
-
-/* Scroll horizontal si n?ssaire */
-.container {
-    overflow-x: auto;
-}
-
-
-/* === Message d’avertissement === */
-.centered-warning {
-  text-align: center;
-  font-weight: bold;
-  margin: 1em 0;
-  color: #b33;
-  font-style: italic;
-}
-
-/* === Table ingrédients avec bouton suppression === */
-table.excel-table td {
-  position: relative;
-  padding-right: 1.5em;
-}
-
-.delete-btn {
-  position: absolute;
-  right: 4px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  color: red;
-  font-weight: bold;
-  background: transparent;
-  border: none;
-  font-size: 1em;
-  line-height: 1;
-}
-
-.delete-btn:hover {
-  color: darkred;
+  #inputRow input {
+    font-size: 0.75rem;
+  }
 }
