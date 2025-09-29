@@ -190,16 +190,24 @@ table.excel-table td {
   color: darkred;
 }
 
-/* Conteneur scrollable horizontal sur petit écran */
+table.excel-table td, table.excel-table th {
+    white-space: normal;   /* autorise le retour à la ligne */
+    word-wrap: break-word; /* coupe les mots longs */
+}
+
+
 @media (max-width: 768px) {
     .container {
-        overflow-x: auto;  /* scroll horizontal si nécessaire */
-        padding: 1rem;     /* réduire padding pour mobile */
+        padding: 1rem; /* réduire les marges sur mobile */
     }
-
-    table.excel-table {
-        min-width: 800px;  /* force un scroll si table trop large */
+    nav {
+        flex-direction: column; /* menu vertical sur petit écran */
+        gap: 0.5rem;
+    }
+    nav a {
+        padding: 0.5rem;
     }
 }
+
 
 
