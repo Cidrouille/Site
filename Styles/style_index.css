@@ -189,3 +189,17 @@ table.excel-table td {
 .delete-btn:hover {
   color: darkred;
 }
+
+/* Conteneur scrollable horizontal sur petit écran */
+@media (max-width: 768px) {
+    .container {
+        overflow-x: auto;  /* scroll horizontal si nécessaire */
+        padding: 1rem;     /* réduire padding pour mobile */
+    }
+
+    table.excel-table {
+        min-width: 800px;  /* force un scroll si table trop large */
+    }
+}
+
+
