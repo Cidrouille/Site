@@ -1,0 +1,13 @@
+{
+  "name": "Liste de Courses",
+  "short_name": "Courses",
+  "icons": [
+    {
+      "src": "/Site/Images/icone.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/Site/recette.html",
+  "display": "standalone"
+}
