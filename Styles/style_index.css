@@ -1,45 +1,49 @@
-/* styles.css */
-
+/* === Corps de page === */
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f9fafb;
+    background: linear-gradient(to bottom, #f0f4f8, #e8edf2); /* fond doux et agréable */
     color: #333;
     margin: 0;
     padding: 0;
 }
 
+/* === Navigation === */
 nav {
     background-color: #007ACC;
     color: white;
     padding: 1rem 2rem;
     display: flex;
     gap: 1.5rem;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12); /* un peu plus de profondeur */
     position: sticky;
     top: 0;
     z-index: 10;
 }
 
+/* Liens de navigation */
 nav a {
     color: white;
     text-decoration: none;
     font-weight: 600;
     padding: 0.3rem 0.6rem;
     border-radius: 4px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 nav a:hover, nav a:focus {
     background-color: #005f99;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     outline: none;
 }
 
+/* Conteneur principal */
 .container {
     padding: 2rem 3rem;
     max-width: 1200px;
     margin: auto;
 }
 
+/* Titres */
 h2 {
     color: #004a99;
     margin-bottom: 1rem;
@@ -47,12 +51,13 @@ h2 {
     padding-bottom: 0.3rem;
 }
 
+/* === Tableau === */
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
-    border-radius: 8px;
+    background: #ffffff; /* tableau reste en avant */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12); /* légèrement plus marqué pour “décoller” du fond */
+    border-radius: 10px;
     overflow: hidden;
 }
 
@@ -61,103 +66,46 @@ thead {
     color: white;
 }
 
-th {
-    font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-thead th {
-    padding: 0.75rem 1rem;
-    text-align: center;
+.excel-table thead th {
+    background-color: #005f99; /* un peu plus doux que le bleu pur */
     font-weight: 700;
 }
 
+/* Lignes paires du tbody */
+.excel-table tbody tr:nth-child(even) {
+    background-color: #f4f7fa; /* contraste doux */
+}
+
+/* Hover sur les lignes */
+tbody tr:hover {
+    background-color: #e0ecf8; /* léger survol pour indiquer la ligne active */
+}
+
+/* Cellules du tableau */
 tbody td {
     padding: 0.6rem 1rem;
-    border-bottom: 1px solid #ddd;
     text-align: center;
+    border-bottom: 1px solid #d1dbe5; /* ligne moins agressive */
 }
 
-tbody tr:hover {
-    background-color: #f0f8ff;
-}
-
-.hidden {
-    display: none;
-}
-
-p .centered-reminder {
-  text-align: center;
-  font-weight: bold;
-  margin: 1em 0;
-  color: #b33;
-  font-style: italic;
-}
-
-/* Styles spécifiques pour tableau "Excel-like" */
-.excel-table thead th {
-    background-color: #004a99;
-    font-weight: 700;
-}
-
-.excel-table {
-    table-layout: fixed; /* répartit la largeur uniformément */
-    width: 100%;         /* prend toute la largeur du conteneur */
-}
-
-.excel-table tbody tr:nth-child(even) {
-    background-color: #f7f9fc;
-}
-
-/* Hauteur augmentée à partir de la 4ème ligne du tbody */
-.excel-table tbody tr:nth-child(n+1) td {
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-}
-
-.excel-table tbody td {
-    min-width: 0;          /* supprimer la largeur minimale fixe */
-    font-family: monospace;
-    word-wrap: break-word; /* autoriser le retour à la ligne */
-    white-space: normal;   /* autoriser le retour à la ligne */
-    padding: 0.4rem 0.6rem; /* réduire un peu le padding */
-}
-
-.dotted-borders th,
-.dotted-borders td {
-    border: 1px dotted #bbb;
-}
-
-.excel-table thead th {
-    word-wrap: break-word;
-    white-space: normal;
-    padding: 0.4rem 0.6rem;
-}
-
+/* Inputs ajout d’ingrédients */
 #inputRow input {
   width: 100%;
   box-sizing: border-box;
   padding: 0.3rem;
   font-size: 1rem;
-  border-radius: 8px; /* arrondit les coins */
-  border: 1px solid #ccc; /* une bordure douce pour mieux voir */
-  transition: border-color 0.3s ease;
+  border-radius: 8px;
+  border: 1px solid #bbb;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 #inputRow input:focus {
-  border-color: #007ACC; /* bordure bleue au focus */
+  border-color: #007ACC;
+  box-shadow: 0 0 5px rgba(0, 122, 204, 0.4);
   outline: none;
 }
 
-#inputRow th {
-    background-color: #007ACC; /* ou aucune couleur */
-}
-
-/* Scroll horizontal si nécessaire */
-.container {
-    overflow-x: auto;
-}
-
-/* === Message d’avertissement === */
+/* Message d’avertissement */
 .centered-warning {
   text-align: center;
   font-weight: bold;
@@ -166,12 +114,7 @@ p .centered-reminder {
   font-style: italic;
 }
 
-/* === Table ingrédients avec bouton suppression === */
-table.excel-table td {
-  position: relative;
-  padding-right: 1.5em;
-}
-
+/* Boutons de suppression dans le tableau */
 .delete-btn {
   position: absolute;
   right: 4px;
@@ -189,7 +132,3 @@ table.excel-table td {
 .delete-btn:hover {
   color: darkred;
 }
-
-
-
-
