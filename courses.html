@@ -54,6 +54,7 @@
             <th>&#127865; Boissons</th>
             <th>&#129533; Produits ménagers</th>
             <th>&#129524; Hygiène &amp; Beauté</th>
+            <th>&#128736;&#65039; Bricolage</th>
           </tr>
         </thead>
         <tbody id="coursesBody">
@@ -65,6 +66,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
     const firebaseConfig = {
       apiKey: "AIzaSyCJkZCKpb8poixAGPhYVUfuuafCnjnJh3o",
       authDomain: "liste-de-courses-8a78d.firebaseapp.com",
@@ -73,8 +75,10 @@
       messagingSenderId: "90294670968",
       appId: "1:90294670968:web:901f321930a3a6342dbf8d"
     };
+
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+
     // --- Conversion et somme des ingrédients ---
     function convertAndSumIngredients(ingredientsRaw) {
       const result = {};
@@ -82,6 +86,7 @@
       const volUnits  = ['ml', 'cl', 'l'];
       const massToMg = { mg: 1, g: 1000, kg: 1e6 };
       const volToMl  = { ml: 1, cl: 10, l: 1000 };
+
       Object.keys(ingredientsRaw).forEach(ing => {
         const qtys = ingredientsRaw[ing].qtys;
         const units = qtys.map(q => q.unit.toLowerCase());
@@ -89,6 +94,7 @@
         let isVol  = units.every(u => volUnits.includes(u));
         let totalBase = 0;
         let preferredUnit = qtys[0].unit;
+
         if (isMass) {
           if (units.includes('kg')) preferredUnit = 'Kg';
           else if (units.includes('g')) preferredUnit = 'g';
@@ -98,6 +104,7 @@
           else if (units.includes('cl')) preferredUnit = 'cL';
           else preferredUnit = 'ml';
         }
+
         qtys.forEach(q => {
           let qty = parseFloat(q.qty.toString().replace(',', '.')) || 0;
           const unit = q.unit.toLowerCase();
@@ -105,6 +112,7 @@
           else if (isVol) totalBase += qty * volToMl[unit];
           else totalBase += qty;
         });
+
         let finalQty;
         if (isMass) {
           if (preferredUnit === 'Kg') finalQty = totalBase / 1e6;
@@ -117,17 +125,20 @@
         } else {
           finalQty = totalBase;
         }
+
         finalQty = Math.round(finalQty * 100) / 100;
         result[ing] = { qty: finalQty, unit: preferredUnit };
       });
       return result;
     }
+
     // --- Variables ---
     let ingredientToCol = {};
     let manualIngredients = [];
     const coursesBody = document.getElementById("coursesBody");
     const manualSelect = document.getElementById("manualSelect");
     const manualUnit = document.getElementById("manualUnit");
+
     // --- Charger ingrédients et unités ---
     async function loadIngredientsList() {
       const snap = await getDocs(collection(db,"ingredients"));
@@ -145,6 +156,7 @@
         manualSelect.appendChild(option);
       });
     }
+
     async function loadUnitsList() {
       const snap = await getDocs(collection(db,"Unites"));
       let unites = [];
@@ -160,6 +172,7 @@
         manualUnit.appendChild(option);
       });
     }
+
     // --- Charger courses existantes (manuelles) ---
     async function loadCoursesData() {
       manualIngredients = [];
@@ -178,6 +191,7 @@
         }
       });
     }
+
     // --- Ajouter manuel ---
     document.getElementById("addManualBtn").addEventListener("click", async ()=>{
       const name = manualSelect.value;
@@ -191,6 +205,7 @@
       manualIngredients.push({nom:name, qty, unit, col, checked:false, manuel:true});
       renderCourses();
     });
+
     // --- Supprimer tout manuel ---
     document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
       if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
@@ -201,6 +216,7 @@
       manualIngredients = [];
       renderCourses();
     });
+
     // --- Récupérer ingrédients du planning ---
     async function loadPlanningIngredients() {
       const coursesSnap = await getDocs(collection(db,"courses"));
@@ -217,11 +233,12 @@
       });
       return convertAndSumIngredients(ingredientsRaw);
     }
+
     // --- Rendu ---
     async function renderCourses(){    
       const planningIngredients = await loadPlanningIngredients();
     
-      const cols = Array.from({length:10},()=>[]);
+      const cols = Array.from({length:11},()=>[]); // 11 colonnes
     
       // --- Ajouter les ingrédients du planning ---
       Object.keys(planningIngredients).forEach(ing=>{
@@ -256,14 +273,13 @@
       const maxRows = Math.max(...cols.map(c=>c.length));
       for(let i=0;i<maxRows;i++){
         const tr = document.createElement("tr");
-        for(let j=0;j<10;j++){
+        for(let j=0;j<11;j++){   // 11 colonnes
           const td = document.createElement("td");
           const item = cols[j][i];
           if(item){
             const cb = document.createElement("input");
             cb.type="checkbox";
     
-            // --- restaurer l'état uniquement si l'ingrédient est toujours dans le planning ---
             if(!item.manuel){
               const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
               if(saved[item.nom] && planningIngredients[item.nom]){
@@ -279,7 +295,6 @@
               td.style.textDecoration = cb.checked ? "line-through" : "none";
     
               if(item.manuel){
-                // Sauvegarde Firestore
                 await setDoc(doc(db,"courses",item.nom), {
                   checked: cb.checked,
                   qty: item.qty||0,
@@ -288,7 +303,6 @@
                   manuel: true
                 }, {merge:true});
               } else {
-                // Sauvegarde locale
                 const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
                 saved[item.nom] = cb.checked;
                 localStorage.setItem("planningChecked", JSON.stringify(saved));
@@ -329,6 +343,3 @@
   </script>
 </body>
 </html>
-
-
-
