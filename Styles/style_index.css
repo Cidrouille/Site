@@ -190,24 +190,6 @@ table.excel-table td {
   color: darkred;
 }
 
-table.excel-table td, table.excel-table th {
-    white-space: normal;   /* autorise le retour à la ligne */
-    word-wrap: break-word; /* coupe les mots longs */
-}
-
-
-@media (max-width: 768px) {
-    .container {
-        padding: 1rem; /* réduire les marges sur mobile */
-    }
-    nav {
-        flex-direction: column; /* menu vertical sur petit écran */
-        gap: 0.5rem;
-    }
-    nav a {
-        padding: 0.5rem;
-    }
-}
 
 
 
