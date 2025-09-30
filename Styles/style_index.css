@@ -59,7 +59,8 @@ nav a:focus {
 ========================= */
 table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate; /* pour arrondir les coins */
+    border-spacing: 0;
     background: white;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
     border-radius: 8px;
@@ -123,6 +124,13 @@ p .centered-reminder {
     padding: 0.4rem 0.6rem;
 }
 
+/* Bordures pleines + coins arrondis */
+.excel-table th,
+.excel-table td {
+    border: 1px solid #f0f8ff;
+    border-radius: 6px;
+}
+
 .excel-table tbody tr:nth-child(even) {
     background-color: #f7f9fc;
 }
@@ -139,12 +147,6 @@ p .centered-reminder {
     word-wrap: break-word;
     white-space: normal;
     padding: 0.4rem 0.6rem;
-}
-
-/* Bordures pointillées optionnelles */
-.dotted-borders th,
-.dotted-borders td {
-    border: 1px dotted #bbb;
 }
 
 /* =========================
@@ -194,11 +196,3 @@ table.excel-table td {
 .delete-btn:hover {
     color: darkred;
 }
-
-
-
-
-
-
-
-
