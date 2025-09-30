@@ -103,7 +103,7 @@ p .centered-reminder {
     text-align: center;
     font-weight: bold;
     margin: 1em 0;
-    color: #b33;
+    color: #d35400;
     font-style: italic;
 }
 
@@ -194,6 +194,7 @@ table.excel-table td {
 .delete-btn:hover {
     color: darkred;
 }
+
 
 
 
