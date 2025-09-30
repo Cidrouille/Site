@@ -18,7 +18,7 @@ body {
 }
 
 h2 {
-    color: #004a99;
+    color: #990099; /* #004a99; */
     margin-bottom: 1rem;
     border-bottom: 2px solid #007ACC;
     padding-bottom: 0.3rem;
@@ -194,6 +194,7 @@ table.excel-table td {
 .delete-btn:hover {
     color: darkred;
 }
+
 
 
 
