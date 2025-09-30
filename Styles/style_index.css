@@ -3,8 +3,7 @@
 ========================= */
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('../Images/index.png') no-repeat center center fixed;
-    background-size: cover; /* adapte l'image à l'écran */
+    background: #f9fafb;
     color: #333;
     margin: 0;
     padding: 0;
@@ -194,6 +193,7 @@ table.excel-table td {
 .delete-btn:hover {
     color: darkred;
 }
+
 
 
 
