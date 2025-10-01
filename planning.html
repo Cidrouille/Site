@@ -106,7 +106,7 @@
       const recettes = snapshot.docs.map(doc => doc.data().nom);
 
       document.querySelectorAll(".recette-select").forEach(select => {
-        select.innerHTML = `<option value="">-- Choisir --</option>`;
+        select.innerHTML = `<option value=""></option>`;
         recettes.forEach(recette => {
           const opt = document.createElement("option");
           opt.value = recette;
@@ -365,6 +365,7 @@ async function updateRecapJour(jour) {
   </script>
 </body>
 </html>
+
 
 
 
