@@ -11,7 +11,7 @@ body {
 }
 
 nav {
-    background: linear-gradient(90deg, #d6f0e0, #c4e8d2); /* dégradé vert très doux */
+    background: linear-gradient(90deg, #d6f0e0, #fbe8d3); /* dégradé vert très doux */
     color: #3c6b4f; /* vert moyen */
     padding: 1rem 2rem;
     display: flex;
@@ -121,6 +121,7 @@ h2 {
     margin: 0.8rem auto 0 auto; /* top auto bottom auto pour centrer horizontalement */
 }
 
+
 /* =========================
    TABLEAUX PLANNING & RECAP
 ========================= */
@@ -217,4 +218,3 @@ select.recette-select {
 select.recette-select:not([value=""]) {
     font-weight: bold;
 }
-
