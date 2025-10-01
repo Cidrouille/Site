@@ -22,6 +22,7 @@ h2 {
     margin-bottom: 1rem;
     border-bottom: 2px solid #007ACC;
     padding-bottom: 0.3rem;
+	text-align: center; /* <- titre centré */
 	text-shadow: 
         1px 1px 0 #f0f8ff,   /* ombre en bas à droite */
        -1px -1px 0 #f0f8ff,  /* ombre en haut à gauche */
@@ -234,3 +235,4 @@ table.excel-table td {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
+
