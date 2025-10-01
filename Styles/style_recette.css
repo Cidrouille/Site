@@ -2,35 +2,39 @@
 
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f9fafb;
+    background: url('../Images/recette.png') no-repeat center center fixed;
+    background-size: cover; /* adapte l'image à l'écran */
     color: #333;
     margin: 0;
     padding: 0;
 }
 
 nav {
-  background-color: #007ACC;
-  color: white;
-  padding: 1rem 2rem;
-  display: flex;
-  gap: 1.5rem;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+    background: linear-gradient(90deg, #fdf3e7, #fbe8d3); /* gradient très doux */
+    color: #5a3e36; /* brun doux mais lisible */
+    padding: 1rem 2rem;
+    display: flex;
+    gap: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* ombre subtile */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #e0cfc1; /* démarcation douce */
+    transition: background 0.3s ease;
 }
 
 nav a {
-  color: white;
-  text-decoration: none;
-  font-weight: 600;
-  padding: 0.3rem 0.6rem;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
+    color: #5a3e36; /* brun doux */
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 nav a:hover {
-  background-color: #005f99;
+    background-color: rgba(90, 62, 54, 0.15); /* survol discret */
+    color: #442e26;
 }
 
 .main-container {
@@ -40,70 +44,75 @@ nav a:hover {
   padding: 1rem;            /* un peu d’air */
 }
 
-/* === Menu latéral === */
+/* === Menu latéral style carnet de recettes === */
 .side-menu {
   position: fixed;
-  top: 63px;                    /* commence après la barre de nav */
+  top: 63px;                    
   left: 0;
   width: 250px;
-  height: calc(100vh - 63px);   /* occupe toute la hauteur visible */
-  background-color: #fff;
-  border-right: 1px solid #ddd;
+  height: calc(100vh - 63px);   
+  background: #fdf6e3;          
+  border-right: 2px solid #d4b483; 
   padding: 1rem;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+  box-shadow: 4px 0 12px rgba(0,0,0,0.15); 
   display: flex;
-  flex-direction: column;       /* empile le contenu verticalement */
+  flex-direction: column;       
   z-index: 1000;
+  font-family: 'Georgia', 'Palatino', serif; 
+  overflow: hidden;
 }
 
 .side-menu h3 {
   margin-bottom: 0.5rem;
-  color: #007ACC;
-  font-size: 1.2rem;
+  color: #b35900; 
+  font-size: 1.3rem;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
 }
 
 #newRecipeBtn {
   margin-bottom: 1rem;
   padding: 0.5rem;
-  background-color: #007ACC;
-  color: white;
+  background-color: #d4880c;
+  color: #fff;
   border: none;
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+  transition: all 0.25s ease;
 }
 
 #newRecipeBtn:hover {
-  background-color: #005f99;
+  background-color: #b35900;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* Wrapper scrollable pour la liste */
 .scroll-wrapper {
-  flex-grow: 1;                       /* prend l’espace restant sous le bouton */
-  overflow-y: auto;                   /* scroll vertical */
-  height: calc(100% - 0.5rem);        /* ajuster pour que la scrollbar ne touche pas le bas */
+  flex-grow: 1;                       
+  overflow-y: auto;                   
+  height: calc(100% - 2rem);        
+  padding-right: 4px; 
 }
 
-/* UL à l’intérieur du wrapper */
 .scroll-wrapper ul {
-  padding-bottom: 1.5rem;             /* espace en bas pour voir la dernière recette */
+  padding: 0.5rem 0;
   margin: 0;
   list-style: none;
 }
 
 .scroll-wrapper ul::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 
 .scroll-wrapper ul::-webkit-scrollbar-thumb {
-  background: #007ACC;
+  background: #d4880c;
   border-radius: 4px;
 }
 
-.scroll-wrapper ul {
+.scroll-wrapper {
   scrollbar-width: thin;
-  scrollbar-color: #007ACC #f1f1f1;
+  scrollbar-color: #d4880c #fdf6e3;
 }
 
 .side-menu li {
@@ -112,19 +121,23 @@ nav a:hover {
 
 .side-menu a {
   text-decoration: none;
-  color: #007ACC;
+  color: #8b4513; 
   font-weight: 500;
   display: block;
-  padding: 0.3rem 0.5rem;
+  padding: 0.4rem 0.6rem;
   border-radius: 4px;
-  transition: background 0.2s ease;
+  transition: all 0.25s ease;
+  background: rgba(255,255,255,0.2);
 }
 
 .side-menu a:hover {
-  background: #e6f2fa;
+  background: rgba(212,180,131,0.4);
+  color: #5a2e0c;
+  transform: translateX(3px);
   text-decoration: none;
 }
 
+/* === Recettes === */
 .recipes {
   flex-grow: 1;
   padding: 2em;
@@ -132,37 +145,67 @@ nav a:hover {
   flex-wrap: wrap;
   gap: 2em;
   justify-content: flex-start;
-  overflow-x: auto; /* scroll horizontal si nécessaire */
+  overflow-x: auto; 
 }
 
 .recipe-card {
-  background-color: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  background: linear-gradient(135deg, #ffe8d6, #f9dcc4); 
+  border: 1px solid #e0a96d;
+  border-radius: 12px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
   padding: 1em;
-  width: 330px;
+  width: 330px; 
+  color: #4a2c2a; 
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.4s ease;
+}
+
+.recipe-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 22px rgba(0, 0, 0, 0.18);
+  background: linear-gradient(135deg, #f9dcc4, #fec89a);
+  border-color: #e67e22;
 }
 
 .recipe-card h2 {
   margin-top: 0;
-  font-size: 1.2em;
-  color: #004a99;
+  font-size: 1.3em;
+  color: #8b4513;
   margin-bottom: 1rem;
-  border-bottom: 2px solid #007ACC;
-  padding-bottom: 0.3rem;
+  border-bottom: 2px solid #d2691e;
+  padding-bottom: 0.4rem;
+  text-shadow: 1px 1px 0 #fff3e6;
+  text-align: center; /* <- titre centré */
 }
 
 .recipe-card ul {
   padding-left: 20px;
 }
 
-/* === Tableau === */
+/* === TABLEAUX RECETTES STYLE AMÉLIORÉ === */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate; 
+  border-spacing: 0;          
   margin-top: 1em;
-  table-layout: fixed; /* colonnes fixes pour éviter débordement */
+  table-layout: fixed;
+  background-color: rgba(255, 255, 255, 0.85); 
+  border-radius: 10px;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.05); 
+}
+
+thead {
+  background-color: #d4880c; 
+  color: white;
+  border-radius: 10px 10px 0 0;
+}
+
+th, td {
+  padding: 0.6em;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  border: none; 
 }
 
 /* Largeur spécifique pour chaque colonne */
@@ -178,34 +221,85 @@ th:nth-child(3), td:nth-child(3) {
   width: 30%;  /* Unité */
 }
 
-thead {
-  background-color: #007ACC;
-  color: white;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 0.5em;
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+tbody tr:nth-child(odd) {
+  background-color: rgba(255, 235, 200, 0.3); 
 }
 
 tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: rgba(255, 235, 200, 0.15); 
 }
 
-/* Contenu éditable */
 td[contenteditable="true"] {
-  background-color: #fffef5;
-  cursor: text;
-  width: 100%;
-  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.6); 
+  border-radius: 6px;
+  padding: 0.5em;
+}
+
+th {
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  font-weight: 600;
 }
 
 /* Sélecteurs */
 select {
   width: 100%;
   box-sizing: border-box;
+}
+
+
+.recipe-card .delete-recipe-btn {
+  display: block;
+  margin: 0.5rem auto 1rem auto; /* centré horizontalement avec un peu de marge verticale */
+  padding: 0.4rem 0.8rem;
+  background-color: #e67e22;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.recipe-card .delete-recipe-btn:hover {
+  background-color: #d35400;
+  transform: translateY(-2px);
+}
+
+/* === Styles pour les menus déroulants dans les recettes === */
+select.ingredient-select,
+select.unite-select {
+  appearance: none;            /* retire le style par défaut du navigateur */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: rgba(255, 235, 200, 0.6); /* fond chaud, clair */
+  border: 1px solid #d4880c;   /* bord chaleureux */
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  font-family: 'Georgia', 'Palatino', serif;
+  color: #4a2c2a;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Ajout d’une petite flèche personnalisée */
+select.ingredient-select::after,
+select.unite-select::after {
+  content: '▼';
+  position: absolute;
+  right: 0.8rem;
+  pointer-events: none;
+  color: #8b4513;
+}
+
+/* Effet au survol et focus */
+select.ingredient-select:hover,
+select.unite-select:hover,
+select.ingredient-select:focus,
+select.unite-select:focus {
+  background-color: rgba(255, 235, 200, 0.8);
+  border-color: #b35900;
+  outline: none;
+  transform: translateY(-1px);
 }
