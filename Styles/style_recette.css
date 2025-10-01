@@ -10,7 +10,7 @@ body {
 }
 
 nav {
-    background: linear-gradient(90deg, #fdf3e7, #fbe8d3); /* gradient très doux */
+    background: linear-gradient(90deg, #fdf3e7, #d6f0e0); /* gradient très doux */
     color: #5a3e36; /* brun doux mais lisible */
     padding: 1rem 2rem;
     display: flex;
@@ -303,3 +303,5 @@ select.unite-select:focus {
   outline: none;
   transform: translateY(-1px);
 }
+
+
