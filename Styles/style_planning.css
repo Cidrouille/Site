@@ -112,6 +112,15 @@ h2 {
     color: #3c6b4f;
 }
 
+.jour-card h4 {
+    text-align: center;
+}
+
+.jour-card .reset-btn {
+    display: block;
+    margin: 0.8rem auto 0 auto; /* top auto bottom auto pour centrer horizontalement */
+}
+
 /* =========================
    TABLEAUX PLANNING & RECAP
 ========================= */
@@ -208,3 +217,4 @@ select.recette-select {
 select.recette-select:not([value=""]) {
     font-weight: bold;
 }
+
