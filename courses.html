@@ -7,7 +7,7 @@
   <link rel="manifest" href="manifest.json">
   
   <title>Liste de Courses</title>
-  <link rel="stylesheet" href="/Site/Styles/style_courses.css" />
+  <link rel="stylesheet" href="Styles/Style_Courses.css" />
 </head>
 <body>
   <!-- ===== BARRE DE NAVIGATION ===== -->
@@ -18,28 +18,35 @@
     <a href="courses.html">Liste de Courses</a>
     <a href="setup.html">Paramètres</a>
   </nav>
+
   <!-- ===== CONTENEUR PRINCIPAL ===== -->
   <div class="container">
     <section id="courses">
       <h2>Liste de Courses</h2>
-  
+
       <!-- ===== FORMULAIRE AJOUT MANUEL ===== -->
       <div id="manualAdd" style="text-align:center; margin-bottom:20px;">
-        <select id="manualSelect">
-          <option value="">Ajouter un ingrédient</option>
-        </select>
+
+        <!-- 🔍 Ingrédient avec datalist (meilleure recherche mobile) -->
+        <input list="ingredientsList" id="manualSelect" placeholder="Rechercher un ingrédient">
+        <datalist id="ingredientsList"></datalist>
+
         <input type="number" id="manualQty" placeholder="Quantité">
-        <select id="manualUnit">
-          <option value="">Sélectionner une unité</option>
-        </select>
+
+        <!-- 🔍 Unité avec datalist -->
+        <input list="unitList" id="manualUnit" placeholder="Unité">
+        <datalist id="unitList"></datalist>
+
         <button id="addManualBtn">Ajouter</button>
       </div>
+
       <!-- Bouton pour supprimer tous les ingrédients manuels -->
       <div style="text-align:center; margin-bottom:20px;">
         <button id="clearManualBtn" style="background-color:#e74c3c; color:white; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">
           Supprimer tous les ingrédients manuels
         </button>
       </div>
+
       <!-- ===== TABLEAU LISTE DE COURSES ===== -->
       <table class="excel-table dotted-borders" id="coursesTable">
         <thead>
@@ -63,6 +70,7 @@
       </table>
     </section>
   </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
     import { getFirestore, collection, getDocs, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
@@ -141,45 +149,45 @@
 
     // --- Charger ingrédients et unités ---
     async function loadIngredientsList() {
-      const snap = await getDocs(collection(db,"ingredients"));
+      const snap = await getDocs(collection(db, "ingredients"));
       let ingredients = [];
       snap.forEach(docSnap => {
         const data = docSnap.data();
         ingredientToCol[data.nom] = data.col;
         ingredients.push(data.nom);
       });
-      ingredients.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-      ingredients.forEach(nom=>{
+      ingredients.sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }));
+      const dataList = document.getElementById("ingredientsList");
+      ingredients.forEach(nom => {
         const option = document.createElement("option");
         option.value = nom;
-        option.textContent = nom;
-        manualSelect.appendChild(option);
+        dataList.appendChild(option);
       });
     }
 
     async function loadUnitsList() {
-      const snap = await getDocs(collection(db,"Unites"));
+      const snap = await getDocs(collection(db, "Unites"));
       let unites = [];
-      snap.forEach(docSnap=>{
+      snap.forEach(docSnap => {
         const data = docSnap.data();
         unites.push(data.nom);
       });
-      unites.sort((a,b)=>a.localeCompare(b,"fr",{sensitivity:"base"}));
-      unites.forEach(nom=>{
+      unites.sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }));
+      const dataList = document.getElementById("unitList");
+      unites.forEach(nom => {
         const option = document.createElement("option");
         option.value = nom;
-        option.textContent = nom;
-        manualUnit.appendChild(option);
+        dataList.appendChild(option);
       });
     }
 
     // --- Charger courses existantes (manuelles) ---
     async function loadCoursesData() {
       manualIngredients = [];
-      const snap = await getDocs(collection(db,"courses"));
-      snap.forEach(docSnap=>{
+      const snap = await getDocs(collection(db, "courses"));
+      snap.forEach(docSnap => {
         const data = docSnap.data();
-        if(data.manuel){
+        if (data.manuel) {
           manualIngredients.push({
             nom: docSnap.id,
             qty: data.qty,
@@ -193,25 +201,28 @@
     }
 
     // --- Ajouter manuel ---
-    document.getElementById("addManualBtn").addEventListener("click", async ()=>{
-      const name = manualSelect.value;
-      const qty = parseFloat(document.getElementById("manualQty").value)||0;
-      const unit = manualUnit.value;
-      if(!name || !unit) return alert("Sélectionnez un ingrédient et une unité");
-      const col = ingredientToCol[name]??0;
-      await setDoc(doc(db,"courses",name), {
-        checked:false, qty, unit, col, manuel:true
+    document.getElementById("addManualBtn").addEventListener("click", async () => {
+      const name = manualSelect.value.trim();
+      const qty = parseFloat(document.getElementById("manualQty").value) || 0;
+      const unit = manualUnit.value.trim();
+      if (!name || !unit) return alert("Sélectionnez un ingrédient et une unité");
+      const col = ingredientToCol[name] ?? 0;
+      await setDoc(doc(db, "courses", name), {
+        checked: false, qty, unit, col, manuel: true
       });
-      manualIngredients.push({nom:name, qty, unit, col, checked:false, manuel:true});
+      manualIngredients.push({ nom: name, qty, unit, col, checked: false, manuel: true });
       renderCourses();
+      manualSelect.value = "";
+      manualQty.value = "";
+      manualUnit.value = "";
     });
 
     // --- Supprimer tout manuel ---
-    document.getElementById("clearManualBtn")?.addEventListener("click", async ()=>{
-      if(!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
-      if(!confirm("Supprimer tous les ingrédients manuels ?")) return;
-      for(const item of manualIngredients){
-        await deleteDoc(doc(db,"courses",item.nom));
+    document.getElementById("clearManualBtn")?.addEventListener("click", async () => {
+      if (!manualIngredients.length) return alert("Aucun ingrédient manuel à supprimer");
+      if (!confirm("Supprimer tous les ingrédients manuels ?")) return;
+      for (const item of manualIngredients) {
+        await deleteDoc(doc(db, "courses", item.nom));
       }
       manualIngredients = [];
       renderCourses();
@@ -219,7 +230,7 @@
 
     // --- Récupérer ingrédients du planning ---
     async function loadPlanningIngredients() {
-      const coursesSnap = await getDocs(collection(db,"courses"));
+      const coursesSnap = await getDocs(collection(db, "courses"));
       const ingredientsRaw = {};
       coursesSnap.forEach(dayDoc => {
         const dayData = dayDoc.data();
@@ -234,94 +245,82 @@
       return convertAndSumIngredients(ingredientsRaw);
     }
 
-    // --- Rendu ---
-    async function renderCourses(){    
+    // --- Rendu du tableau ---
+    async function renderCourses() {    
       const planningIngredients = await loadPlanningIngredients();
-    
-      const cols = Array.from({length:11},()=>[]); // 11 colonnes
-    
-      // --- Ajouter les ingrédients du planning ---
-      Object.keys(planningIngredients).forEach(ing=>{
-        const col = ingredientToCol[ing]??0;
-        cols[col].push({nom:ing, ...planningIngredients[ing], checked:false, manuel:false});
+      const cols = Array.from({ length: 11 }, () => []);
+
+      Object.keys(planningIngredients).forEach(ing => {
+        const col = ingredientToCol[ing] ?? 0;
+        cols[col].push({ nom: ing, ...planningIngredients[ing], checked: false, manuel: false });
       });
-    
-      // --- Ajouter les ingrédients manuels ---
-      manualIngredients.forEach(item=>{
-        const col = item.col??0;
-        cols[col].push({...item, checked:item.checked||false, manuel:true});
+
+      manualIngredients.forEach(item => {
+        const col = item.col ?? 0;
+        cols[col].push({ ...item, checked: item.checked || false, manuel: true });
       });
-    
-      // --- Nettoyage du localStorage : on supprime les entrées qui ne sont plus dans le planning ---
+
       let saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
       const allCurrentIngredients = [
         ...Object.keys(planningIngredients),
         ...manualIngredients.map(i => i.nom)
       ];
       Object.keys(saved).forEach(ing => {
-        if (!allCurrentIngredients.includes(ing)) {
-          delete saved[ing];
-        }
+        if (!allCurrentIngredients.includes(ing)) delete saved[ing];
       });
       localStorage.setItem("planningChecked", JSON.stringify(saved));
-    
-      // --- Tri alphabétique par colonne ---
-      cols.forEach(col=>col.sort((a,b)=>a.nom.localeCompare(b.nom,"fr",{sensitivity:"base"})));
-    
-      // --- Construction du tableau ---
-      coursesBody.innerHTML="";
-      const maxRows = Math.max(...cols.map(c=>c.length));
-      for(let i=0;i<maxRows;i++){
+
+      cols.forEach(col => col.sort((a, b) => a.nom.localeCompare(b.nom, "fr", { sensitivity: "base" })));
+
+      coursesBody.innerHTML = "";
+      const maxRows = Math.max(...cols.map(c => c.length));
+      for (let i = 0; i < maxRows; i++) {
         const tr = document.createElement("tr");
-        for(let j=0;j<11;j++){   // 11 colonnes
+        for (let j = 0; j < 11; j++) {
           const td = document.createElement("td");
           const item = cols[j][i];
-          if(item){
+          if (item) {
             const cb = document.createElement("input");
-            cb.type="checkbox";
-    
-            if(!item.manuel){
-              const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
-              if(saved[item.nom] && planningIngredients[item.nom]){
-                item.checked = true;
-              } else {
-                item.checked = false;
-              }
+            cb.type = "checkbox";
+
+            if (!item.manuel) {
+              const saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
+              if (saved[item.nom] && planningIngredients[item.nom]) item.checked = true;
+              else item.checked = false;
             }
+
             cb.checked = item.checked;
-    
-            cb.addEventListener("change", async ()=>{
+            cb.addEventListener("change", async () => {
               item.checked = cb.checked;
               td.style.textDecoration = cb.checked ? "line-through" : "none";
-    
-              if(item.manuel){
-                await setDoc(doc(db,"courses",item.nom), {
+              if (item.manuel) {
+                await setDoc(doc(db, "courses", item.nom), {
                   checked: cb.checked,
-                  qty: item.qty||0,
-                  unit: item.unit||"",
-                  col: item.col||0,
+                  qty: item.qty || 0,
+                  unit: item.unit || "",
+                  col: item.col || 0,
                   manuel: true
-                }, {merge:true});
+                }, { merge: true });
               } else {
-                const saved = JSON.parse(localStorage.getItem("planningChecked")||"{}");
+                const saved = JSON.parse(localStorage.getItem("planningChecked") || "{}");
                 saved[item.nom] = cb.checked;
                 localStorage.setItem("planningChecked", JSON.stringify(saved));
               }
             });
-    
+
             td.appendChild(cb);
-            td.appendChild(document.createTextNode(` ${item.nom} (${item.qty||""} ${item.unit||""})`));
-    
-            if(item.checked) td.style.textDecoration = "line-through";
-    
-            if(item.manuel){
+            td.appendChild(document.createTextNode(` ${item.nom} (${item.qty || ""} ${item.unit || ""})`));
+
+            if (item.checked) td.style.textDecoration = "line-through";
+
+            if (item.manuel) {
               const delBtn = document.createElement("span");
-              delBtn.textContent=" ❌";
-              delBtn.style.color="red";
-              delBtn.style.cursor="pointer";
-              delBtn.addEventListener("click", async ()=>{
-                await deleteDoc(doc(db,"courses",item.nom));
-                manualIngredients = manualIngredients.filter(m=>m.nom!==item.nom);
+              delBtn.textContent = " ❌";
+              delBtn.style.color = "red";
+              delBtn.style.cursor = "pointer";
+              delBtn.addEventListener("click", async () => {
+                await deleteDoc(doc(db, "courses", item.nom));
+                manualIngredients = manualIngredients.filter(m => m.nom !== item.nom);
                 renderCourses();
               });
               td.appendChild(delBtn);
@@ -334,7 +333,7 @@
     }
 
     // --- Initialisation ---
-    (async function init(){
+    (async function init() {
       await loadIngredientsList();
       await loadUnitsList();
       await loadCoursesData();
@@ -343,6 +342,3 @@
   </script>
 </body>
 </html>
-
-
-
