@@ -11,20 +11,20 @@ body {
 
 nav {
     background: linear-gradient(90deg, #fdf3e7, #d6f0e0); /* gradient très doux */
-    color: #5a3e36; /* brun doux mais lisible */
+    color: #5a3e36; 
     padding: 1rem 2rem;
     display: flex;
     gap: 1.5rem;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08); /* ombre subtile */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     position: sticky;
     top: 0;
     z-index: 10;
-    border-bottom: 1px solid #e0cfc1; /* démarcation douce */
+    border-bottom: 1px solid #e0cfc1;
     transition: background 0.3s ease;
 }
 
 nav a {
-    color: #5a3e36; /* brun doux */
+    color: #5a3e36;
     text-decoration: none;
     font-weight: 600;
     padding: 0.3rem 0.6rem;
@@ -33,38 +33,38 @@ nav a {
 }
 
 nav a:hover {
-    background-color: rgba(90, 62, 54, 0.15); /* survol discret */
+    background-color: rgba(90, 62, 54, 0.15);
     color: #442e26;
 }
 
 .main-container {
   display: flex;
   min-height: 100vh;
-  margin-left: 250px;       /* pousse les recettes à droite */
-  padding: 1rem;            /* un peu d’air */
+  margin-left: 250px; 
+  padding: 1rem; 
 }
 
 /* === Menu latéral style carnet de recettes === */
 .side-menu {
   position: fixed;
-  top: 63px;                    
+  top: 63px;
   left: 0;
   width: 250px;
-  height: calc(100vh - 63px);   
-  background: #fdf6e3;          
-  border-right: 2px solid #d4b483; 
+  height: calc(100vh - 63px);
+  background: #fdf6e3;
+  border-right: 2px solid #d4b483;
   padding: 1rem;
-  box-shadow: 4px 0 12px rgba(0,0,0,0.15); 
+  box-shadow: 4px 0 12px rgba(0,0,0,0.15);
   display: flex;
-  flex-direction: column;       
+  flex-direction: column;
   z-index: 1000;
-  font-family: 'Georgia', 'Palatino', serif; 
+  font-family: 'Georgia', 'Palatino', serif;
   overflow: hidden;
 }
 
 .side-menu h3 {
   margin-bottom: 0.5rem;
-  color: #b35900; 
+  color: #b35900;
   font-size: 1.3rem;
   text-shadow: 1px 1px 0 rgba(255,255,255,0.6);
 }
@@ -89,9 +89,9 @@ nav a:hover {
 }
 
 .scroll-wrapper {
-  flex-grow: 1;                       
-  overflow-y: auto;                   
-  height: calc(100% - 2rem);        
+  flex-grow: 1;
+  overflow-y: auto;
+  height: calc(100% - 2rem);
   padding-right: 4px; 
 }
 
@@ -145,17 +145,17 @@ nav a:hover {
   flex-wrap: wrap;
   gap: 2em;
   justify-content: flex-start;
-  overflow-x: auto; 
+  overflow-x: auto;
 }
 
 .recipe-card {
-  background: linear-gradient(135deg, #ffe8d6, #f9dcc4); 
+  background: linear-gradient(135deg, #ffe8d6, #f9dcc4);
   border: 1px solid #e0a96d;
   border-radius: 12px;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
   padding: 1em;
-  width: 330px; 
-  color: #4a2c2a; 
+  width: 330px;
+  color: #4a2c2a;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.4s ease;
 }
 
@@ -174,7 +174,7 @@ nav a:hover {
   border-bottom: 2px solid #d2691e;
   padding-bottom: 0.4rem;
   text-shadow: 1px 1px 0 #fff3e6;
-  text-align: center; /* <- titre centré */
+  text-align: center;
 }
 
 .recipe-card ul {
@@ -184,17 +184,17 @@ nav a:hover {
 /* === TABLEAUX RECETTES STYLE AMÉLIORÉ === */
 table {
   width: 100%;
-  border-collapse: separate; 
-  border-spacing: 0;          
+  border-collapse: separate;
+  border-spacing: 0;
   margin-top: 1em;
   table-layout: fixed;
-  background-color: rgba(255, 255, 255, 0.85); 
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 10px;
-  box-shadow: inset 0 0 8px rgba(0,0,0,0.05); 
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
 }
 
 thead {
-  background-color: #d4880c; 
+  background-color: #d4880c;
   color: white;
   border-radius: 10px 10px 0 0;
 }
@@ -205,51 +205,32 @@ th, td {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  border: none; 
+  border: none;
 }
 
-/* Largeur spécifique pour chaque colonne */
-th:nth-child(1), td:nth-child(1) {
-  width: 50%;  /* colonne Ingrédient plus large */
-}
+th:nth-child(1), td:nth-child(1) { width: 50%; }
+th:nth-child(2), td:nth-child(2) { width: 20%; }
+th:nth-child(3), td:nth-child(3) { width: 30%; }
 
-th:nth-child(2), td:nth-child(2) {
-  width: 20%;  /* Quantité plus étroite */
-}
-
-th:nth-child(3), td:nth-child(3) {
-  width: 30%;  /* Unité */
-}
-
-tbody tr:nth-child(odd) {
-  background-color: rgba(255, 235, 200, 0.3); 
-}
-
-tbody tr:nth-child(even) {
-  background-color: rgba(255, 235, 200, 0.15); 
-}
+tbody tr:nth-child(odd) { background-color: rgba(255, 235, 200, 0.3); }
+tbody tr:nth-child(even) { background-color: rgba(255, 235, 200, 0.15); }
 
 td[contenteditable="true"] {
-  background-color: rgba(255, 255, 255, 0.6); 
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 6px;
   padding: 0.5em;
 }
 
-th {
-  border-bottom: 2px solid rgba(255,255,255,0.4);
-  font-weight: 600;
-}
+th { border-bottom: 2px solid rgba(255,255,255,0.4); font-weight: 600; }
 
-/* Sélecteurs */
 select {
   width: 100%;
   box-sizing: border-box;
 }
 
-
 .recipe-card .delete-recipe-btn {
   display: block;
-  margin: 0.5rem auto 1rem auto; /* centré horizontalement avec un peu de marge verticale */
+  margin: 0.5rem auto 1rem auto;
   padding: 0.4rem 0.8rem;
   background-color: #e67e22;
   color: #fff;
@@ -268,11 +249,11 @@ select {
 /* === Styles pour les menus déroulants dans les recettes === */
 select.ingredient-select,
 select.unite-select {
-  appearance: none;            /* retire le style par défaut du navigateur */
+  appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  background-color: rgba(255, 235, 200, 0.6); /* fond chaud, clair */
-  border: 1px solid #d4880c;   /* bord chaleureux */
+  background-color: rgba(255, 235, 200, 0.6);
+  border: 1px solid #d4880c;
   border-radius: 6px;
   padding: 0.4rem 0.6rem;
   font-family: 'Georgia', 'Palatino', serif;
@@ -283,17 +264,6 @@ select.unite-select {
   box-sizing: border-box;
 }
 
-/* Ajout d’une petite flèche personnalisée */
-select.ingredient-select::after,
-select.unite-select::after {
-  content: '▼';
-  position: absolute;
-  right: 0.8rem;
-  pointer-events: none;
-  color: #8b4513;
-}
-
-/* Effet au survol et focus */
 select.ingredient-select:hover,
 select.unite-select:hover,
 select.ingredient-select:focus,
@@ -304,4 +274,45 @@ select.unite-select:focus {
   transform: translateY(-1px);
 }
 
+/* === Styles pour le champ lien et le bouton lien === */
+.recipe-link-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0.5rem 0 1rem 0;
+}
 
+.recipe-link-container input[type="text"] {
+  flex-grow: 1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid #d4880c;
+  background-color: rgba(255, 235, 200, 0.6);
+  color: #4a2c2a;
+  font-family: 'Georgia', 'Palatino', serif;
+  margin-right: 0.5rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.recipe-link-container input[type="text"]:focus {
+  background-color: rgba(255, 235, 200, 0.8);
+  outline: none;
+  border-color: #b35900;
+  transform: translateY(-1px);
+}
+
+.recipe-link-container button {
+  padding: 0.4rem 0.8rem;
+  background-color: #d4880c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.recipe-link-container button:hover {
+  background-color: #b35900;
+  transform: translateY(-1px);
+}
