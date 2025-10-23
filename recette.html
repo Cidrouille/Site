@@ -79,34 +79,39 @@
       }
 
       tbody.querySelectorAll("tr").forEach((row, i) => {
-        const ingredientSelect = row.querySelector(".ingredient-select");
-        const uniteSelect = row.querySelector(".unite-select");
+	    const ingredientSelect = row.querySelector(".ingredient-select");
+	    const uniteSelect = row.querySelector(".unite-select");
+	
+	    // Tri alphabétique avant de créer les options
+	    allIngredients.sort((a, b) => a.localeCompare(b));
+	    allUnites.sort((a, b) => a.localeCompare(b));
+	
+	    allIngredients.forEach(ing => {
+	      const option = document.createElement("option");
+	      option.value = ing;
+	      option.textContent = ing;
+	      ingredientSelect.appendChild(option);
+	    });
+	
+	    allUnites.forEach(unite => {
+	      const option = document.createElement("option");
+	      option.value = unite;
+	      option.textContent = unite;
+	      uniteSelect.appendChild(option);
+	    });
+	
+	    if (lignes[i]) {
+	      ingredientSelect.value = lignes[i].ingredient || "";
+	      row.cells[1].textContent = lignes[i].quantite || "";
+	      uniteSelect.value = lignes[i].unite || "";
+	    }
+	
+	    // Sauvegarde automatique dès qu'il y a un changement
+	    ingredientSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
+	    row.cells[1].addEventListener("input", () => saveRecipeAuto(row.closest("article")));
+	    uniteSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
+	});
 
-        allIngredients.forEach(ing => {
-          const option = document.createElement("option");
-          option.value = ing;
-          option.textContent = ing;
-          ingredientSelect.appendChild(option);
-        });
-
-        allUnites.forEach(unite => {
-          const option = document.createElement("option");
-          option.value = unite;
-          option.textContent = unite;
-          uniteSelect.appendChild(option);
-        });
-
-        if (lignes[i]) {
-          ingredientSelect.value = lignes[i].ingredient || "";
-          row.cells[1].textContent = lignes[i].quantite || "";
-          uniteSelect.value = lignes[i].unite || "";
-        }
-
-        // Sauvegarde automatique dès qu'il y a un changement
-        ingredientSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
-        row.cells[1].addEventListener("input", () => saveRecipeAuto(row.closest("article")));
-        uniteSelect.addEventListener("change", () => saveRecipeAuto(row.closest("article")));
-      });
     }
 
     // Ajout d'une recette dans le DOM
@@ -267,6 +272,7 @@
 
 </body>
 </html>
+
 
 
 
