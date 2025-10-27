@@ -3,14 +3,14 @@
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: url('../Images/recette.png') no-repeat center center fixed;
-    background-size: cover; /* adapte l'image à l'écran */
+    background-size: cover;
     color: #333;
     margin: 0;
     padding: 0;
 }
 
 nav {
-    background: linear-gradient(90deg, #fdf3e7, #d6f0e0); /* gradient très doux */
+    background: linear-gradient(90deg, #fdf3e7, #d6f0e0);
     color: #5a3e36; 
     padding: 1rem 2rem;
     display: flex;
@@ -315,4 +315,33 @@ select.unite-select:focus {
 .recipe-link-container button:hover {
   background-color: #b35900;
   transform: translateY(-1px);
+}
+
+/* === ✅ Correction du scroll sur mobile pour le menu latéral === */
+.side-menu {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 63px);
+  overflow: hidden;
+}
+
+.scroll-wrapper {
+  flex-grow: 1;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  max-height: 100%;
+  padding-right: 0.5rem;
+}
+
+.scroll-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #d4880c;
+  border-radius: 4px;
+}
+
+.scroll-wrapper::-webkit-scrollbar-track {
+  background: #fdf6e3;
 }
