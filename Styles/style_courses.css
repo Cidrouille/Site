@@ -154,3 +154,44 @@ th, td {
     transform: translateY(-2px);
 }
 
+/* =========================
+   ✅ CORRECTIONS RESPONSIVE MOBILE (AJOUTÉES)
+   Ne modifie pas le style desktop
+========================= */
+@media (max-width: 768px) {
+
+    /* Évite les bugs de zoom / saccades sur mobile */
+    body {
+        background-attachment: scroll;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        padding: 0.8rem 1rem;
+        gap: 0.5rem;
+    }
+
+    nav a {
+        font-size: 0.9rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+
+    thead th,
+    tbody td {
+        padding: 0.4rem 0.5rem;
+    }
+
+    #manualAdd select,
+    #manualAdd input,
+    #manualAdd button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
