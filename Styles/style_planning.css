@@ -12,8 +12,8 @@ body {
 }
 
 nav {
-    background: linear-gradient(90deg, #d6f0e0, #fbe8d3); /* dégradé vert très doux */
-    color: #3c6b4f; /* vert moyen */
+    background: linear-gradient(90deg, #d6f0e0, #fbe8d3);
+    color: #3c6b4f;
     padding: 1rem 2rem;
     display: flex;
     gap: 1.5rem;
@@ -84,7 +84,7 @@ h2 {
 #jours-container {
     display: flex;
     gap: 20px;
-    overflow-x: hidden; /* empêche scrollbar native */
+    overflow-x: hidden;
     padding-bottom: 1rem;
     scroll-behavior: smooth;
 }
@@ -119,9 +119,8 @@ h2 {
 
 .jour-card .reset-btn {
     display: block;
-    margin: 0.8rem auto 0 auto; /* top auto bottom auto pour centrer horizontalement */
+    margin: 0.8rem auto 0 auto;
 }
-
 
 /* =========================
    TABLEAUX PLANNING & RECAP
@@ -134,7 +133,7 @@ table {
     border-radius: 8px;
     overflow: hidden;
     box-shadow: inset 0 0 4px rgba(0,0,0,0.05);
-    table-layout: auto; /* texte visible */
+    table-layout: auto;
 }
 
 thead {
@@ -215,7 +214,76 @@ select.recette-select {
     font-weight: normal;
 }
 
-/* Quand une option est sélectionnée autre que le placeholder */
+/* Quand une option est sélectionnée */
 select.recette-select:not([value=""]) {
     font-weight: bold;
+}
+
+
+/* ==========================================================================
+   ✅ RESPONSIVE COMME courses.css
+   (corrige le zoom + réduit les cartes pour téléphones 360/375px)
+   ========================================================================== */
+@media (max-width: 768px) {
+
+    body {
+        background-attachment: scroll;
+    }
+
+    nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.6rem;
+        padding: 0.8rem;
+    }
+
+    nav a {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .jour-card {
+        min-width: 320px;
+        padding: 0.8rem;
+    }
+
+    table {
+        font-size: 0.82rem;
+    }
+
+    thead th,
+    tbody td {
+        padding: 0.45rem 0.5rem;
+    }
+}
+
+/* =========================
+   📱 Très petits écrans (<480px)
+========================= */
+@media (max-width: 480px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    h2 {
+        font-size: 1.2rem;
+    }
+
+    .jour-card {
+        min-width: 280px; /* Évite le zoom forcé sur les écrans 360px */
+        padding: 0.6rem;
+    }
+
+    table {
+        font-size: 0.75rem;
+    }
+
+    nav a {
+        font-size: 0.75rem;
+    }
 }
