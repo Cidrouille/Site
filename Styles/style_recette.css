@@ -1,9 +1,11 @@
-/* === STYLE POUR LA PAGE DE RECETTES === */
-
+/* =========================
+   BODY & NAVIGATION
+========================= */
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: url('../Images/recette.png') no-repeat center center fixed;
     background-size: cover;
+    background-attachment: scroll; /* FIX POUR LE ZOOM SUR CERTAINS TÉLÉPHONES */
     color: #333;
     margin: 0;
     padding: 0;
@@ -37,6 +39,9 @@ nav a:hover {
     color: #442e26;
 }
 
+/* =========================
+   MAIN CONTAINER & SIDE MENU
+========================= */
 .main-container {
   display: flex;
   min-height: 100vh;
@@ -44,7 +49,6 @@ nav a:hover {
   padding: 1rem; 
 }
 
-/* === Menu latéral style carnet de recettes === */
 .side-menu {
   position: fixed;
   top: 63px;
@@ -90,29 +94,23 @@ nav a:hover {
 
 .scroll-wrapper {
   flex-grow: 1;
-  overflow-y: auto;
-  height: calc(100% - 2rem);
-  padding-right: 4px; 
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  max-height: 100%;
+  padding-right: 0.5rem;
 }
 
-.scroll-wrapper ul {
-  padding: 0.5rem 0;
-  margin: 0;
-  list-style: none;
-}
-
-.scroll-wrapper ul::-webkit-scrollbar {
+.scroll-wrapper::-webkit-scrollbar {
   width: 8px;
 }
 
-.scroll-wrapper ul::-webkit-scrollbar-thumb {
+.scroll-wrapper::-webkit-scrollbar-thumb {
   background: #d4880c;
   border-radius: 4px;
 }
 
-.scroll-wrapper {
-  scrollbar-width: thin;
-  scrollbar-color: #d4880c #fdf6e3;
+.scroll-wrapper::-webkit-scrollbar-track {
+  background: #fdf6e3;
 }
 
 .side-menu li {
@@ -137,7 +135,9 @@ nav a:hover {
   text-decoration: none;
 }
 
-/* === Recettes === */
+/* =========================
+   RECIPES & CARDS
+========================= */
 .recipes {
   flex-grow: 1;
   padding: 2em;
@@ -177,11 +177,9 @@ nav a:hover {
   text-align: center;
 }
 
-.recipe-card ul {
-  padding-left: 20px;
-}
-
-/* === TABLEAUX RECETTES STYLE AMÉLIORÉ === */
+/* =========================
+   TABLES
+========================= */
 table {
   width: 100%;
   border-collapse: separate;
@@ -246,7 +244,9 @@ select {
   transform: translateY(-2px);
 }
 
-/* === Styles pour les menus déroulants dans les recettes === */
+/* =========================
+   SELECTS
+========================= */
 select.ingredient-select,
 select.unite-select {
   appearance: none;
@@ -274,7 +274,9 @@ select.unite-select:focus {
   transform: translateY(-1px);
 }
 
-/* === Styles pour le champ lien et le bouton lien === */
+/* =========================
+   FORM INPUTS ET BOUTONS LIEN
+========================= */
 .recipe-link-container {
   display: flex;
   justify-content: space-between;
@@ -317,31 +319,75 @@ select.unite-select:focus {
   transform: translateY(-1px);
 }
 
-/* === ✅ Correction du scroll sur mobile pour le menu latéral === */
-.side-menu {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 63px);
-  overflow: hidden;
+/* =========================
+   ✅ MEDIA QUERIES RESPONSIVE MOBILE
+========================= */
+@media (max-width: 768px) {
+
+  body {
+    background-attachment: scroll;
+  }
+
+  .main-container {
+    flex-direction: column;
+    margin-left: 0;
+    padding: 0.5rem;
+  }
+
+  .side-menu {
+    width: 100%;
+    height: auto;
+    position: relative;
+    top: 0;
+    border-right: none;
+    border-bottom: 2px solid #d4b483;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .scroll-wrapper {
+    height: auto;
+    flex-grow: 0;
+  }
+
+  nav a {
+    font-size: 0.85rem;
+  }
+
+  .recipe-card {
+    width: 45%;
+    padding: 0.8em;
+  }
+
+  table {
+    font-size: 0.82rem;
+  }
+
+  th, td {
+    padding: 0.35rem;
+  }
 }
 
-.scroll-wrapper {
-  flex-grow: 1;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  max-height: 100%;
-  padding-right: 0.5rem;
-}
+@media (max-width: 480px) {
+  .recipe-card {
+    width: 90%;
+    padding: 0.6em;
+  }
 
-.scroll-wrapper::-webkit-scrollbar {
-  width: 8px;
-}
+  h2.recipe-card {
+    font-size: 1.1rem;
+  }
 
-.scroll-wrapper::-webkit-scrollbar-thumb {
-  background: #d4880c;
-  border-radius: 4px;
-}
+  nav a {
+    font-size: 0.8rem;
+  }
 
-.scroll-wrapper::-webkit-scrollbar-track {
-  background: #fdf6e3;
+  table {
+    font-size: 0.75rem;
+  }
+
+  th, td {
+    padding: 0.25rem;
+  }
 }
