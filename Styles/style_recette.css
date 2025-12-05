@@ -4,7 +4,7 @@
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: url('../Images/recette.png') no-repeat center center fixed;
-   background-attachment: scroll; /* FIX POUR LE ZOOM SUR CERTAINS TÉLÉPHONES */
+    background-attachment: scroll; /* FIX POUR LE ZOOM SUR CERTAINS TÉLÉPHONES */
     background-size: cover;
     color: #333;
     margin: 0;
@@ -391,5 +391,6 @@ select.unite-select:focus {
     padding: 0.25rem;
   }
 }
+
 
 
