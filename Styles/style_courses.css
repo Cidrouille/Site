@@ -4,6 +4,7 @@
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: url('../Images/courses.png') no-repeat center center fixed;
+	background-attachment: scroll; /* FIX POUR LE ZOOM SUR CERTAINS TÉLÉPHONES */
     background-size: cover;
     color: #444;
     margin: 0;
@@ -204,3 +205,4 @@ th, td {
     font-size: 0.75rem;
   }
 }
+
