@@ -204,39 +204,3 @@ th, td {
     font-size: 0.75rem;
   }
 }
-/* Réglage spécifique pour très petits écrans */
-@media (max-width: 480px) {
-
-
-body {
-font-size: 14px;
-}
-
-
-h2 {
-font-size: 1.2rem;
-}
-
-
-table {
-font-size: 0.75rem;
-}
-}
-
-
-@media (max-width: 420px) {
-body {
-font-size: 13px !important;
-}
-nav a {
-font-size: 13px !important;
-padding: 0.3rem 0.6rem;
-}
-table td, table th {
-font-size: 12px !important;
-padding: 0.45rem !important;
-}
-h2 {
-font-size: 1.1rem !important;
-}
-}
