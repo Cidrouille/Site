@@ -3,8 +3,9 @@
 ========================= */
 body {
     font-family: 'Segoe UI Emoji', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: url('../Images/planning.jpg') no-repeat center center fixed;
+    background: url('../Images/planning.jpg') no-repeat center center;
     background-size: cover;
+    background-attachment: scroll; /* FIX POUR LE ZOOM SUR CERTAINS TÉLÉPHONES */
     color: #333;
     margin: 0;
     padding: 0;
@@ -218,4 +219,3 @@ select.recette-select {
 select.recette-select:not([value=""]) {
     font-weight: bold;
 }
-
